@@ -21,7 +21,7 @@ router.get('/',async (req, res) => {
 // Route to update user profile
 router.put('/', async (req, res) => {
   const { username, email, avatar } = req.body;
-  const currentUsername = req.user.username; // Assuming req.user is populated by authentication middleware
+  const currentUsername = req.user.username; 
 
   try {
     const userToUpdate = await User.findOne({ username: currentUsername });
@@ -30,7 +30,6 @@ router.put('/', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check for unique username if it's being changed
     if (username && username !== userToUpdate.username) {
       const existingUserWithUsername = await User.findOne({ username });
       if (existingUserWithUsername) {
@@ -39,7 +38,6 @@ router.put('/', async (req, res) => {
       userToUpdate.username = username;
     }
 
-    // Check for unique email if it's being changed
     if (email && email !== userToUpdate.email) {
       const existingUserWithEmail = await User.findOne({ email });
       if (existingUserWithEmail) {
@@ -48,13 +46,12 @@ router.put('/', async (req, res) => {
       userToUpdate.email = email;
     }
 
-    // Update avatar if provided
     if (avatar) {
       userToUpdate.avatar = avatar;
     }
 
     await userToUpdate.save();
-    res.status(200).json(userToUpdate); // Send back the updated user object
+    res.status(200).json(userToUpdate); 
   } catch (err) {
     console.error('Error updating user profile:', err);
     res.status(500).json({ message: 'Server error while updating profile' });
@@ -64,27 +61,25 @@ router.put('/', async (req, res) => {
 // Route to add a friend
 router.post('/add-friend', async (req, res) => {
   const username = req.body.username;
-  const currentUserId = req.user.username; // Get the ID of the current logged-in user
+  const currentUserId = req.user.username;
 
   try {
-    const currentUser = await User.findOne({username : currentUserId}); // Find the current user by ID
-    const friendToAdd = await User.findOne({ username }); // Find the friend by username
+    const currentUser = await User.findOne({username : currentUserId}); 
+    const friendToAdd = await User.findOne({ username }); 
     if (!currentUser || !friendToAdd) {
       return res.json({ message: 'User or friend not found' });
     }
 
-    // Prevent adding self as friend
     if (currentUser._id.toString() === friendToAdd._id.toString()) {
       return res.json({ message: 'Cannot add yourself as a friend' });
     }
 
-    // Check if already friends with the current user
+  
     if (!Array.isArray(currentUser.friends)) currentUser.friends = [];
     if (currentUser.friends.includes(friendToAdd._id)) {
       return res.json({ message: 'Already friends with this user' });
     }
 
-    // Add friend to current user's friends list
     currentUser.friends.push(friendToAdd._id);
     await currentUser.save();
 
@@ -95,7 +90,6 @@ router.post('/add-friend', async (req, res) => {
   }
 });
 
-// Route to search for users in profile page
 router.get('/findfriend', async (req, res) => {
   const query = req.query.findfriend; 
 
