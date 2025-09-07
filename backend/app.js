@@ -58,7 +58,6 @@ app.use('/api/register', register);
 app.use('/api/login', login);
 
 app.use('/api/chats',middleware,chats);
-// app.use('/api/psl_msg',middleware,Psl_msg_model);
 app.use('/api/psl_msg',middleware,psl_msg);
 discussion_socket_io(io);
 

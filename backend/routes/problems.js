@@ -166,7 +166,4 @@ router.get('/:problemId/submissions', async (req, res) => {
   res.json(usersubmission);
 })
 
-
-
-
 export default router; 

@@ -11,20 +11,18 @@ const secret_key = process.env.secret_key;
 router.post('/', async (req, res) => {
     const { username, email, password } = req.body;
     try {
-        // Check for existing user by email or username
         const existingUser = await userModel.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
             return res.status(400).json({ message: 'Username or email already exists.' });
         }
-
+        console.log("ko");
         const salt = await bcrypt.genSalt(10);
         const hash_password = await bcrypt.hash(password, salt);
 
-        // Let MongoDB generate the _id (ObjectId)
+       
         const newuser = new userModel({ username, email, password: hash_password });
         await newuser.save();
 
-        // Create JWT with user._id as userId
         
         const token = jwt.sign(
             { userId: newuser._id, username: newuser.username },
@@ -33,7 +31,7 @@ router.post('/', async (req, res) => {
         );
 
         res.cookie('token', token, {
-            httpOnly: false, // set to true for security in production
+            httpOnly: false,
             sameSite: 'lax',
             secure: false
         });
