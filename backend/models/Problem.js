@@ -29,16 +29,16 @@ const problemSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  examples: [exampleSchema], // Illustrative examples for the problem description
+  examples: [exampleSchema], 
   constraints: {
     type: String,
     trim: true,
     default: ''
   },
-  tags: [{ type: String, trim: true }], // e.g., ["Arrays", "Dynamic Programming"]
-  testCases: [testCaseSchema], // Comprehensive test cases for judging
-  imageUrls: [{ type: String, trim: true }] // URLs for images in the problem description
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt
+  tags: [{ type: String, trim: true }], 
+  testCases: [testCaseSchema], 
+  imageUrls: [{ type: String, trim: true }] 
+}, { timestamps: true });
 
 const Problem = mongoose.model('Problem', problemSchema);
 

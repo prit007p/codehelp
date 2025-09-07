@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     unique: true
   },
   solvedQuestions: {
-    type: [String], // Assuming solved questions are stored as an array of strings (e.g., question IDs)
+    type: [String],
     default: [],
   },
   email: {
