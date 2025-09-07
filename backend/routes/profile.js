@@ -58,7 +58,7 @@ router.put('/', async (req, res) => {
 
 router.post('/add-friend', async (req, res) => {
   const username = req.body.username;
-  const currentUserId = req.user.username; 
+  const currentUserId = req.user.username;
 
   try {
     const currentUser = await User.findOne({username : currentUserId}); 
