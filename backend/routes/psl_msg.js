@@ -4,7 +4,7 @@ import axios from 'axios';
 import Psl_msg from '../models/psL_msg_model.js';
 
 router.get('/messages/:id',async(req,res)=>{
-    const user1Id = req.user.userId; // Use ObjectId from JWT
+    const user1Id = req.user.userId; 
     const user2Id = req.params.id;
     try {
         const chat = await Psl_msg.findOne({
@@ -16,7 +16,7 @@ router.get('/messages/:id',async(req,res)=>{
         if (chat) {
             res.json(chat.messages);
         } else {
-            res.json([]); // No chat found, return empty array
+            res.json([]); 
         }
     } catch (err) {
         res.status(500).json({ message: 'Error fetching messages', error: err.message });
