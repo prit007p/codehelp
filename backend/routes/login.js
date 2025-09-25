@@ -25,9 +25,9 @@ router.post('/', async (req, res) => {
             { expiresIn: '7d' }
         );
         res.cookie('token', token, {
-            httpOnly: false,       // allow frontend to read it (less secure)
-            sameSite: 'lax',       // allow cross-site cookies
-            secure: false          // for localhost
+            httpOnly: false,       
+            sameSite: 'lax',       
+            secure: false          
         });
         res.json({ success: true, message: 'Login successful', user: { _id: user._id, username: user.username, email: user.email }, token });
     } catch (err) {
