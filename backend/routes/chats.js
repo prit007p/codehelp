@@ -6,8 +6,6 @@ const router = express.Router();
 router.get('/',async (req,res)=>{
     const username = req.user.username;
     try{
-        console.log("kya re ");
-        //here is some chat 
         const user = await User.findOne({username});
         const friendsWithLastMessage = await Promise.all(user.friends.map(async (friend) => {
             const lastMessage = await message.findOne({
