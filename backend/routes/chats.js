@@ -19,7 +19,6 @@ router.get('/',async (req,res)=>{
         res.json(friendsWithLastMessage);
     }    
     catch(err){
-        console.log("k");
         console.log("error in finding friends in Chats",err);
     }
 })
