@@ -3,6 +3,7 @@ const app = express();
 import cors from 'cors';
 import { createServer } from 'node:http';
 import { Server } from "socket.io";
+import 'dotenv/config.js';
 const server = createServer(app);
 import login from './routes/login.js';
 import questionex from './routes/solution.js';
@@ -14,8 +15,6 @@ import solutionSocket from './other/persaonal-msg-socket.js';
 import problemRoutes from './routes/problems.js';
 import problemDiscussionSchema from './models/problemdiscussion.js';
 import cookieParser from 'cookie-parser';
-import jwt from 'jsonwebtoken';
-const secret_key = 'maha_dev'
 import profile from './routes/profile.js';
 import discussion_socket_io from './other/discussion_socketio.js';
 import middleware from './other/middleware.js';
@@ -25,44 +24,79 @@ import chats from './routes/chats.js';
 import psl_msg from './routes/psl_msg.js';
 import cloudnairy from './other/cloudnairy.js';
 
+// Environment variables
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/chatapp';
+const PORT = process.env.PORT || 3002;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-app.use(cookieParser());
-
-mongoose.connect('mongodb://localhost:27017/chatapp', {
+// MongoDB connection
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log(' MongoDB connected'))
+  .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
+// CORS configuration - supports both localhost and Vercel deployment
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173', // Vite default port
+  FRONTEND_URL
+].filter(Boolean); // Remove any undefined values
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Socket.IO CORS configuration
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
+// Middleware
+app.use(cookieParser());
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
 
-app.use('/questionid',middleware, questionex);
-app.use('/api/problems/',middleware, problemRoutes);
-app.use('/api/compile',middleware, compileRoutes);
-
-app.use('/api/profile',middleware,profile);
-app.use('/api/get-signature',middleware,cloudnairy);
+// Routes
+app.use('/questionid', middleware, questionex);
+app.use('/api/problems/', middleware, problemRoutes);
+app.use('/api/compile', middleware, compileRoutes);
+app.use('/api/profile', middleware, profile);
+app.use('/api/get-signature', middleware, cloudnairy);
 app.use('/api/register', register);
 app.use('/api/login', login);
+app.use('/api/chats', middleware, chats);
+app.use('/api/psl_msg', middleware, psl_msg);
 
-app.use('/api/chats',middleware,chats);
-app.use('/api/psl_msg',middleware,psl_msg);
+// Socket.IO setup
 discussion_socket_io(io);
 
-server.listen(3002, () => {
-  console.log('server running at http://localhost:3002');
+// Health check endpoint for Render/Vercel
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Start server
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Frontend URL: ${FRONTEND_URL}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 
