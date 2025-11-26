@@ -8,9 +8,8 @@ const middleware = (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
-      return res.status(401).json({ redirect: '/login', message: 'Please login' });
+      return res.json({ status: 401, message: 'Please login' });
     }
-
     const decode = jwt.verify(token, secret_key);
     req.user = decode;
     return next();

@@ -9,14 +9,13 @@ import {
 } from "@/components/ui/select"
 
 export const supportedLanguages = [
-  { name: 'nodejs', version: '18.15.0', displayName: 'Javascript', editorLanguage: 'javascript' },
+  { name: 'javascript', version: '18.15.0', displayName: 'Javascript', editorLanguage: 'javascript' },
   { name: 'python3', version: '3.10.0', displayName: 'Python', editorLanguage: 'python' },
   { name: 'cpp', version: '10.2.0', displayName: 'C++', editorLanguage: 'cpp' },
   { name: 'java', version: '15.0.2', displayName: 'Java', editorLanguage: 'java' },
   { name: 'c', version: '10.2.0', displayName: 'C', editorLanguage: 'c' },
   { name: 'ruby', version: '3.0.1', displayName: 'Ruby', editorLanguage: 'ruby' },
   { name: 'go', version: '1.16.2', displayName: 'Go', editorLanguage: 'go' },
-  // Add more based on your Piston instance's GET /api/v2/runtimes output
 ];
 
 const Selector = ({ selectedLanguage, setSelectedLanguage }) => {

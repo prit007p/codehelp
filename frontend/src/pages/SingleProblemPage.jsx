@@ -48,7 +48,7 @@ const SingleProblemPage = () => {
       try {
         const response = await axios.get(`/api/problems/${problemId}`);
         setProblem(response.data);
-        console.log(response.data);
+        // console.log(response.data);
         setErrorProblem(null);
       } catch (err) {
         setErrorProblem(err.response?.data?.msg || err.message || 'Failed to fetch problem details');
@@ -78,8 +78,8 @@ const SingleProblemPage = () => {
       testCase.language = language.editorLanguage;
       testCase.version = language.version;
       testCase.code = code;
-      console.log("this is code", code);
-      console.log("this is testCase", testCase);
+      // console.log("this is code", code);
+      // console.log("this is testCase", testCase);
 
       
       const responseData = (await axios.post(`/api/compile`, {testCase})).data;

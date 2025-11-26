@@ -34,19 +34,17 @@ mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log('MongoDB connected'))
+  .then(() => console.log('MongoDB connected',mongoUri))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// CORS configuration - supports both localhost and Vercel deployment
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://localhost:5173', // Vite default port
+  'http://localhost:5173',
   FRONTEND_URL
-].filter(Boolean); // Remove any undefined values
+].filter(Boolean); 
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
@@ -60,7 +58,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Socket.IO CORS configuration
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
@@ -74,8 +71,8 @@ app.use(cookieParser());
 app.use(express.json());
 
 // Routes
-app.use('/questionid', middleware, questionex);
-app.use('/api/problems/', middleware, problemRoutes);
+app.use('/questionid',middleware, questionex);
+app.use('/api/problems/',middleware, problemRoutes);
 app.use('/api/compile', middleware, compileRoutes);
 app.use('/api/profile', middleware, profile);
 app.use('/api/get-signature', middleware, cloudnairy);

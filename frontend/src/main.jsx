@@ -5,7 +5,7 @@ import "./index.css"
 import { BrowserRouter as Router } from "react-router-dom"
 import { ThemeProvider } from "./components/theme-provider"
 // Import API client to initialize it (interceptors are configured in config/api.js)
-import "./config/api"
+// import "./config/api"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Router>

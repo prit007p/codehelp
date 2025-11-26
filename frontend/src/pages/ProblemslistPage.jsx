@@ -3,13 +3,14 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
+import { useNavigate } from 'react-router-dom';
 
 const ProblemslistPage = () => {
+  const navigate = useNavigate();
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Removed: const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('none'); // 'difficulty-asc', 'difficulty-desc', 'name-asc', 'name-desc', 'status-solved-unsolved', 'status-unsolved-solved'
+  const [sortBy, setSortBy] = useState('none'); 
   const [selectedTag, setSelectedTag] = useState('All');
 
   const showToast = ({ title, description, status }) => {
@@ -20,8 +21,12 @@ const ProblemslistPage = () => {
     const fetchProblems = async () => {
       try {
         const response = await axios.get('/api/problems');
+        console.log(response.data.status);
+        if(response.data.status === 401){
+          navigate("/login");
+          return;
+        }
         setProblems(response.data);
-        // console.log(response.data);
       } catch (err) {
         setError("Failed to fetch problems. Please try again later.");
         showToast({ title: "Error", description: "Failed to fetch problems.", status: "error" });
@@ -45,7 +50,6 @@ const ProblemslistPage = () => {
   const filteredAndSortedProblems = useMemo(() => {
     let processedProblems = [...problems];
 
-    // Apply tag filter
     if (selectedTag !== 'All') {
       processedProblems = processedProblems.filter(problem =>
         problem.tags && problem.tags.includes(selectedTag)

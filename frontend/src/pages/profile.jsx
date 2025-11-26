@@ -10,7 +10,7 @@ import { Toast } from 'radix-ui'
 import { Toaster } from 'sonner'
 import { useTheme } from '@/components/theme-provider'
 import ModeToggle from '@/components/Themechanger'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Label } from '@/components/ui/label'
 import {
     Sheet,
@@ -32,7 +32,11 @@ const Profile = () => {
     const [findfriend, setFindfriends] = useState([]);
     const [editUsername, setEditUsername] = useState("");
     const [editEmail, setEditEmail] = useState("");
+    const [friends,setFriends] = useState(0);
     const [avatarFile, setAvatarFile] = useState(null);
+    const [totalSubmissions,setTotalSubmission] = useState(0);
+    const [acceptedSubmissions,setAcceptedSubmission] = useState(0);
+    const navigate = useNavigate();
 
     const token = Cookies.get("token");
     const { theme } = useTheme();
@@ -41,11 +45,16 @@ const Profile = () => {
         const fetchuser = async () => {
             try {
                 const res = await axios.get('/api/profile');
-                console.log(res.data);
+                // console.log(res.data);
                 if (res.data ) {
                     setUser(res.data);
                     setEditUsername(res.data.username);
                     setEditEmail(res.data.email);
+                    console.log(res.data.friends);
+                    setFriends(res.data.friends.length);
+                    setTotalSubmission(res.data.totalSubmissions);
+                    setAcceptedSubmission(res.data.acceptedSubmissions);
+                    console.log(totalSubmissions);
                 }
 
                 toast("welcome to your profile");
@@ -59,10 +68,16 @@ const Profile = () => {
                 }
             }
         };
-
         fetchuser();
+        const fetchsubmission = async ()=> {
+            const submissions = await axios.get('/api/problems/submission');
+            console.log(submissions.data);
+            setTotalSubmission(submissions.data.length);
+            const count = submissions.data.filter(obj => obj.status === "accepted").length;
+            setAcceptedSubmission(count);
+        }
+        fetchsubmission();
     }, []);
-
     // handling edit profile option
     async function handleSave() {
         let avatarUrl = user?.avatar; // Keep existing avatar if no new file is uploaded
@@ -139,6 +154,13 @@ const Profile = () => {
         }
     }
 
+    // logout
+    const handleLogout = () => {
+        Cookies.remove("token");
+        toast.success("Logged out successfully.");
+        navigate("/login");
+    };
+
     //adding friend section
     async function addfriend(username) {
         try {
@@ -167,14 +189,12 @@ const Profile = () => {
                     </div>
                     <div className=' flex flex-col gap-1'>
                         <p className='font-semibold text-muted-foreground'>Email : {user?.email}</p>
-                        <p className='font-semibold text-muted-foreground'>Location : {user?.location}</p>
-                        <p className='font-semibold text-muted-foreground'>Total Submissions : {user?.totalSubmissions}</p>
-                        <p className='font-semibold text-muted-foreground'>Accepted Submissions : {user?.acceptedSubmissions}</p>
-                        <p className='font-semibold text-muted-foreground'>Questions Solved : {user?.numberOfQuestionsSolved}</p>
+                        <p className='font-semibold text-muted-foreground'>Total Submissions : {totalSubmissions}</p>
+                        <p className='font-semibold text-muted-foreground'>Accepted Submissions : {acceptedSubmissions }</p>
                         <p className='font-semibold text-muted-foreground'> Friends : {user?.friends?.length}</p>
                         <a className='font-semibold text-primary'> My friends</a>
                         {/*edit section*/}
-                        <div>
+                        <div className="flex gap-3 flex-wrap items-center">
                             {/*Edit option side opener*/}
                             <Sheet>
                                 <SheetTrigger asChild>
@@ -217,6 +237,9 @@ const Profile = () => {
                                     </SheetFooter>
                                 </SheetContent>
                             </Sheet>
+                            <Button variant="destructive" onClick={handleLogout}>
+                                Logout
+                            </Button>
                         </div>
                     </div>
                 </Card>

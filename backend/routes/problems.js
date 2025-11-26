@@ -66,6 +66,9 @@ router.get('/:problemId/discussions', async (req, res) => {
 router.post('/:problemId/submit', async (req, res) => {
   try {
     const { language, version, files} = req.body;
+    const username = req.user.username;
+    const user = await User.findOne({username});
+
 
     if (!language || !version || !files || !Array.isArray(files) || files.length === 0 || !files[0].content) {
       return res.status(400).json({ error: 'Missing required fields: language, version, or file content.' });
@@ -102,6 +105,8 @@ router.post('/:problemId/submit', async (req, res) => {
             expected: testCase.output,
             correct: true
           })
+          user.acceptedSubmissions++; 
+          user.totalSubmissions++;
         }
         else if (pistonResponse.data.run.stderr) {
           result.push({
@@ -112,6 +117,7 @@ router.post('/:problemId/submit', async (req, res) => {
           })
           status = "Unaccepted";
           remark = "Compilation Error"
+          user.totalSubmissions++;
           break;
         }
         else {
@@ -123,6 +129,7 @@ router.post('/:problemId/submit', async (req, res) => {
           })
           status = "Unaccepted";
           remark = "Wrong Output";
+          user.totalSubmissions++;
           break;
         }
         
@@ -150,7 +157,7 @@ router.post('/:problemId/submit', async (req, res) => {
       remark,
       result
     });
-    console.log(newSubmission);
+    // console.log(newSubmission);
     await newSubmission.save();
     res.status(201).json(newSubmission);
   } catch (err) {
@@ -162,7 +169,7 @@ router.post('/:problemId/submit', async (req, res) => {
 router.get('/:problemId/submissions', async (req, res) => {
   const userId = req.user.userId;
   const usersubmission = await SubmissionModel.find({ problemId: req.params.problemId, userId });
-  console.log(usersubmission);
+  // console.log(usersubmission);
   res.json(usersubmission);
 })
 
