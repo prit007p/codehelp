@@ -8,7 +8,7 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
-  const [activeTab, setActiveTab] = useState('profile'); // 'profile', 'submissions', 'friends'
+  const [activeTab, setActiveTab] = useState('profile'); 
 
   const showToast = ({ title, description, status }) => {
     if (title) alert(`${title}${description ? '\n' + description : ''}`);

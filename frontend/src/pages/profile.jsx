@@ -80,11 +80,10 @@ const Profile = () => {
     }, []);
     // handling edit profile option
     async function handleSave() {
-        let avatarUrl = user?.avatar; // Keep existing avatar if no new file is uploaded
+        let avatarUrl = user?.avatar; 
 
         if (avatarFile) {
             try {
-                // 1. Get Cloudinary signature
                 const signatureRes = await axios.get('/api/get-signature', {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -99,11 +98,13 @@ const Profile = () => {
                 formData.append("signature", signature);
                 formData.append("folder", folder);
 
+
                 const cloudinaryUploadRes = await axios.post(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
                 });
+
 
                 avatarUrl = cloudinaryUploadRes.data.secure_url;
                 toast.success("Avatar uploaded successfully!");

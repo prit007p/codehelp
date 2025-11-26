@@ -24,6 +24,8 @@ const LoginPage =  function LoginForm() {
     e.preventDefault();
     try {
       const response = await axios.post('api/login', { email: userEmail, password: userPassword });
+      
+      console.log(response.data);
       if(response.data.status === false){
         alert("Something went wrong !!")
       }

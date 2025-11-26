@@ -25,7 +25,7 @@ import psl_msg from './routes/psl_msg.js';
 import cloudnairy from './other/cloudnairy.js';
 
 // Environment variables
-const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/chatapp';
+const mongoUri = process.env.MONGO_URI ;
 const PORT = process.env.PORT || 3002;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
