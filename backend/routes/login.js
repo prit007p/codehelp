@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { userId: user._id, username: user.username },
+            { userId: user._id, username: user.username,role: user.role },
             secret_key,
             { expiresIn: '7d' }
         );
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
             sameSite: 'lax',       
             secure: false          
         });
-        res.json({ success: true, message: 'Login successful', user: { _id: user._id, username: user.username, email: user.email }, token });
+        res.json({user: { _id: user._id, username: user.username, email: user.email,role: user.role }, token });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error during login' });

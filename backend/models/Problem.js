@@ -8,8 +8,7 @@ const exampleSchema = new mongoose.Schema({
 
 const testCaseSchema = new mongoose.Schema({
   input: { type: String, required: true },
-  output: { type: String, required: true },
-  isHidden: { type: Boolean, default: false }
+  output: { type: String, required: true }
 });
 
 const problemSchema = new mongoose.Schema({
@@ -36,8 +35,7 @@ const problemSchema = new mongoose.Schema({
     default: ''
   },
   tags: [{ type: String, trim: true }], 
-  testCases: [testCaseSchema], 
-  imageUrls: [{ type: String, trim: true }] 
+  testCases: [testCaseSchema]
 }, { timestamps: true });
 
 const Problem = mongoose.model('Problem', problemSchema);

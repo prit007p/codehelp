@@ -157,7 +157,6 @@ router.post('/:problemId/submit', async (req, res) => {
       remark,
       result
     });
-    // console.log(newSubmission);
     await newSubmission.save();
     res.status(201).json(newSubmission);
   } catch (err) {

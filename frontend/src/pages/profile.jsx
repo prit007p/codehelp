@@ -50,11 +50,9 @@ const Profile = () => {
                     setUser(res.data);
                     setEditUsername(res.data.username);
                     setEditEmail(res.data.email);
-                    console.log(res.data.friends);
                     setFriends(res.data.friends.length);
                     setTotalSubmission(res.data.totalSubmissions);
                     setAcceptedSubmission(res.data.acceptedSubmissions);
-                    console.log(totalSubmissions);
                 }
 
                 toast("welcome to your profile");
@@ -71,14 +69,13 @@ const Profile = () => {
         fetchuser();
         const fetchsubmission = async ()=> {
             const submissions = await axios.get('/api/problems/submission');
-            console.log(submissions.data);
             setTotalSubmission(submissions.data.length);
             const count = submissions.data.filter(obj => obj.status === "accepted").length;
             setAcceptedSubmission(count);
         }
         fetchsubmission();
     }, []);
-    // handling edit profile option
+
     async function handleSave() {
         let avatarUrl = user?.avatar; 
 
@@ -168,7 +165,6 @@ const Profile = () => {
             const res = await axios.post('/api/profile/add-friend', {
                 username
             });
-            console.log(res.data);
             toast(res.data.message);
         }
         catch (err) {

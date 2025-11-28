@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 const Profile = () => {
@@ -8,6 +9,7 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
+  const [role, setRole] = useState(null);
   const [activeTab, setActiveTab] = useState('profile'); 
 
   const showToast = ({ title, description, status }) => {
@@ -16,17 +18,22 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      const navigate = useNavigate();
       const token = Cookies.get('token');
       if (!token) {
-        setError("No token found, please log in.");
         setLoading(false);
+        navigate('/login');
         return;
       }
 
       try {
-        const response = await axios.get('http://localhost:3002/api/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get('/api/profile', token);
+        if(response.data.status === false){
+          setLoading(false);
+          navigate('/login');
+          return;
+        }
+        setRole(response.data.role);
         setUserProfile(response.data);
         setLoading(false);
       } catch (err) {
@@ -42,9 +49,7 @@ const Profile = () => {
     const token = Cookies.get('token');
     if (!token) return;
     try {
-      const response = await axios.get('http://localhost:3002/api/users/friends', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get('/api/users/friends', token);
       setFriends(response.data.friends);
       setFriendRequests(response.data.friendRequests);
     } catch (err) {
@@ -63,7 +68,7 @@ const Profile = () => {
     const token = Cookies.get('token');
     if (!token) return;
     try {
-      await axios.post('http://localhost:3002/api/users/accept-friend-request', { requestId }, {
+      await axios.post('/api/users/accept-friend-request', { requestId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       showToast({ title: "Request Accepted", description: "Friend added!", status: "success" });
@@ -78,7 +83,7 @@ const Profile = () => {
     const token = Cookies.get('token');
     if (!token) return;
     try {
-      await axios.post('http://localhost:3002/api/users/reject-friend-request', { requestId }, {
+      await axios.post('/api/users/reject-friend-request', { requestId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       showToast({ title: "Request Rejected", description: "Friend request declined.", status: "info" });

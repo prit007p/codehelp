@@ -1,5 +1,3 @@
-import express from 'express';
-import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config.js'; 
 const secret_key = process.env.secret_key;
@@ -8,7 +6,7 @@ const middleware = (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
-      return res.json({ status: 401, message: 'Please login' });
+      return res.json({ status: false, message: 'Please login' });
     }
     const decode = jwt.verify(token, secret_key);
     req.user = decode;

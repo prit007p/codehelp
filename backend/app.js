@@ -6,7 +6,6 @@ import { Server } from "socket.io";
 import 'dotenv/config.js';
 const server = createServer(app);
 import login from './routes/login.js';
-import questionex from './routes/solution.js';
 import register from './routes/register.js';
 import mongoose from 'mongoose';
 import Message from './models/messageuser.js';
@@ -19,17 +18,17 @@ import profile from './routes/profile.js';
 import discussion_socket_io from './other/discussion_socketio.js';
 import middleware from './other/middleware.js';
 import compileRoutes from './routes/compile.js';
-import userRoutes from './routes/users.js';
 import chats from './routes/chats.js';
 import psl_msg from './routes/psl_msg.js';
 import cloudnairy from './other/cloudnairy.js';
+import isadmin from './other/isadmin.js';
+import adminRoutes from './routes/adminRoutes.js';
 
-// Environment variables
 const mongoUri = process.env.MONGO_URI ;
 const PORT = process.env.PORT || 3002;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-// MongoDB connection
+
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -66,30 +65,23 @@ const io = new Server(server, {
   }
 });
 
-// Middleware
+
 app.use(cookieParser());
 app.use(express.json());
 
-// Routes
-app.use('/questionid',middleware, questionex);
+
+app.use('/api/admin', middleware,isadmin, adminRoutes);
 app.use('/api/problems/',middleware, problemRoutes);
 app.use('/api/compile', middleware, compileRoutes);
-app.use('/api/profile', middleware, profile);
+app.use('/api/profile', middleware,isadmin, profile);
 app.use('/api/get-signature', middleware, cloudnairy);
 app.use('/api/register', register);
 app.use('/api/login', login);
 app.use('/api/chats', middleware, chats);
 app.use('/api/psl_msg', middleware, psl_msg);
 
-// Socket.IO setup
 discussion_socket_io(io);
 
-// Health check endpoint for Render/Vercel
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Start server
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);

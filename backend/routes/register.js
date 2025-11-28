@@ -17,14 +17,14 @@ router.post('/', async (req, res) => {
         }
         const salt = await bcrypt.genSalt(10);
         const hash_password = await bcrypt.hash(password, salt);
-
-       
-        const newuser = new userModel({ username, email, password: hash_password });
+        let role = "user";
+        if(email === "pritbaldaniya@gmail.com"){
+            role = "admin";
+        }
+        const newuser = new userModel({ username, email, password: hash_password, role: role });
         await newuser.save();
-
-        
         const token = jwt.sign(
-            { userId: newuser._id, username: newuser.username },
+            { userId: newuser._id, username: newuser.username,role: newuser.role },
             secret_key,
             { expiresIn: '7d' }
         );
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
             secure: false
         });
 
-        res.json({ success: true, user: { _id: newuser._id, username: newuser.username, email: newuser.email }, token });
+        res.json({  user: { _id: newuser._id, username: newuser.username, email: newuser.email,role: newuser.role }, token });
     } catch (err) {
         console.error(err);
         if (err.name === 'ValidationError') {

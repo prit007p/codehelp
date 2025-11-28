@@ -5,10 +5,10 @@ import User from '../models/User.js';
 router.get('/',async (req, res) => {
   try {
     const username = req.user.username;
-    const user = await User.findOne({ username }).populate('friends', 'username avatar _id');
+    const user = await User.findOne({ username });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.json({message: 'token expired',status:false});
     }
     res.json(user);
   } catch (error) {
