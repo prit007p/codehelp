@@ -6,7 +6,6 @@ router.get('/',async (req, res) => {
   try {
     const username = req.user.username;
     const user = await User.findOne({ username });
-
     if (!user) {
       return res.json({message: 'token expired',status:false});
     }

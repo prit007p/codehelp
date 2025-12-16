@@ -3,18 +3,23 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const SubmissionPage = () => {
   const [submissions, setSubmissions] = useState([]);
   const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false);
   const [errorSubmissions, setErrorSubmissions] = useState(null);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
-  
-  async function fetchSubmission(){
+  const navigate = useNavigate();
+  async function fetchSubmission() {
+
     setIsLoadingSubmissions(true);
     setErrorSubmissions(null);
     try {
-      const response  = await axios.get('/api/problems/submission');
+      const response = await axios.get('/api/problems/submission');
+      if (response.data.status === false) {
+        navigate('/login');
+      }
       setSubmissions(response.data);
       console.log(response.data);
     } catch (err) {
@@ -28,7 +33,7 @@ const SubmissionPage = () => {
     fetchSubmission();
   }, []);
   return (
-   <div className="container mx-auto p-4 bg-background">
+    <div className="container mx-auto p-4 bg-background">
       <h1 className="text-3xl font-bold mb-6">My Submissions</h1>
 
       {isLoadingSubmissions && <p>Loading submissions...</p>}
@@ -48,7 +53,7 @@ const SubmissionPage = () => {
               <p><strong>Language:</strong> {submission.language}</p>
               <p><strong>Status:</strong> {submission.status}</p>
               <p><strong>Remark:</strong> {submission.remark || 'N/A'}</p>
-              <Button 
+              <Button
                 onClick={() => setSelectedSubmission(submission)}
                 className="mt-4"
               >
@@ -85,7 +90,7 @@ const SubmissionPage = () => {
           </Card>
         </div>
       )}
-   </div>
+    </div>
   )
 }
 

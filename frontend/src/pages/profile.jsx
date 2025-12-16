@@ -45,12 +45,13 @@ const Profile = () => {
         const fetchuser = async () => {
             try {
                 const res = await axios.get('/api/profile');
-                // console.log(res.data);
+                if(res.data.status===false){
+                    navigate('/login');
+                }
                 if (res.data ) {
                     setUser(res.data);
                     setEditUsername(res.data.username);
                     setEditEmail(res.data.email);
-                    setFriends(res.data.friends.length);
                     setTotalSubmission(res.data.totalSubmissions);
                     setAcceptedSubmission(res.data.acceptedSubmissions);
                 }

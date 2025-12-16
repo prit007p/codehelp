@@ -1,9 +1,4 @@
-import { io } from 'socket.io-client';
-import React from 'react';
-import { useEffect, useState } from 'react';
 import Solution from './routes/Solution';
-import CodeEditor from './routes/CodeEditor';
-
 import Profile from './pages/profile';
 import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
@@ -25,7 +20,7 @@ function ThemedToaster() {
   return <Toaster theme={theme === "system" ? undefined : theme} />;
 }
 
-function App() {       
+function App() {
   const navbarHeight = '4.5rem';
   const location = useLocation();
   const showNavbar = !location.pathname.startsWith("/login") && !location.pathname.startsWith("/register");
@@ -37,14 +32,14 @@ function App() {
       <div className="w-full">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Home/>} />
-          <Route path='/Landing' element={<Landing/>}/>
+          <Route path="/" element={<Home />} />
+          <Route path='/Landing' element={<Landing />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/solution" element={<Solution />} />
           <Route path="/problems" element={<ProblemslistPage />} />
           <Route path="/problem/:problemId" element={<SingleProblemPage />} />
-          <Route path='/register' element={<RegisterPage/>}/>
-          <Route path='/Chats' element={<Chats/>}/>
+          <Route path='/register' element={<RegisterPage />} />
+          <Route path='/Chats' element={<Chats />} />
           <Route path="/chat/:id" element={<ChatPage />} />
           <Route path="/submission" element={<SubmissionPage />} />
         </Routes>
