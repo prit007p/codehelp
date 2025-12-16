@@ -36,7 +36,7 @@ AdminJS.registerAdapter({
 })
 
 mongoose.connect(mongoUri)
-    .then(() => console.log('MongoDB connected', mongoUri))
+    .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
 const allowedOrigins = [
