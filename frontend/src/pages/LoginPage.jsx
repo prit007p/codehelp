@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios.config';
 import Cookies from 'js-cookie';
 import LoginForm from '../components/Loginform';
 

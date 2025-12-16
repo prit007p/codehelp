@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios.config';
 import { Link, useLocation } from 'react-router-dom';
 import Editor from '../components/Editor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

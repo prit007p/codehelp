@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios.config';
 import { FaPlay, FaTrash, FaPlus, FaChevronDown, FaTimes } from 'react-icons/fa';
 import Editor from '../components/Editor';
 import Selector, { supportedLanguages } from '../components/Selector';

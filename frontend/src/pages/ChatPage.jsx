@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import axios from 'axios';
+import axios from 'axios.config';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
