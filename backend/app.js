@@ -29,6 +29,8 @@ import messageuser from './models/messageuser.js';
 const mongoUri = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3002;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 AdminJS.registerAdapter({
     Resource: AdminJSMongoose.Resource,
@@ -72,14 +74,26 @@ app.use(cookieParser());
 app.use(express.json());
 
 
-
+const ADMIN = {
+    email: ADMIN_EMAIL,
+    password: ADMIN_PASSWORD,
+}
 
 const adminOptions = {
     resources: [Problem, User, submission, Problemdiscussion, messageuser],
 }
 
 const admin = new AdminJS(adminOptions)
-const adminRouter = AdminJSExpress.buildRouter(admin)
+const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
+    authenticate: async(email, password) => {
+        if (ADMIN.password === password && ADMIN.email === email) {
+            return ADMIN
+        }
+        return null
+    },
+    cookieName: 'adminjs',
+    cookiePassword: 'somePassword',
+})
 app.use(admin.options.rootPath, adminRouter)
 
 
