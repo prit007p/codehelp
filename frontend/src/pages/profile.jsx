@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import axios from 'axios'
+import axios from 'axios.config';
 import Cookies from 'js-cookie'
 import React, { useEffect, useState } from 'react'
 import { toast } from "sonner"
