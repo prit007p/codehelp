@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-iimport axios from 'axios.config';
+import axios from 'axios.config';
 // Remove Chakra UI imports
 // import { Box, Flex, VStack, HStack, Select, Button as ChakraButton, Text, Heading, Textarea, useToast, CircularProgress, Grid, GridItem } from '@chakra-ui/react';
 import Editor from '../components/Editor';

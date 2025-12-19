@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import axios from 'axios.config';
+import axiosInstance from 'axios.config';
+import axios from 'axios'; // Native axios for Cloudinary (no withCredentials)
 import Cookies from 'js-cookie'
 import React, { useEffect, useState } from 'react'
 import { toast } from "sonner"
@@ -44,8 +45,8 @@ const Profile = () => {
     useEffect(() => {
         const fetchuser = async () => {
             try {
-                const res = await axios.get('/api/profile');
-                if(res.data.status===false){
+                const res = await axiosInstance.get('/api/profile');
+                if (res.data.status === false) {
                     navigate('/login');
                 }
                 if (res.data ) {
@@ -68,8 +69,8 @@ const Profile = () => {
             }
         };
         fetchuser();
-        const fetchsubmission = async ()=> {
-            const submissions = await axios.get('/api/problems/submission');
+        const fetchsubmission = async () => {
+            const submissions = await axiosInstance.get('/api/problems/submission');
             setTotalSubmission(submissions.data.length);
             const count = submissions.data.filter(obj => obj.status === "accepted").length;
             setAcceptedSubmission(count);
@@ -78,11 +79,11 @@ const Profile = () => {
     }, []);
 
     async function handleSave() {
-        let avatarUrl = user?.avatar; 
+        let avatarUrl = user?.avatar;
 
         if (avatarFile) {
             try {
-                const signatureRes = await axios.get('/api/get-signature', {
+                const signatureRes = await axiosInstance.get('/api/get-signature', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -114,7 +115,7 @@ const Profile = () => {
         }
 
         try {
-            const res = await axios.put('/api/profile', {
+            const res = await axiosInstance.put('/api/profile', {
                 username: editUsername,
                 email: editEmail,
                 avatar: avatarUrl,
@@ -143,7 +144,7 @@ const Profile = () => {
         setFind(value);
         try {
             if (value.trim()) {
-                const res = await axios.get('/api/profile/findfriend', {
+                const res = await axiosInstance.get('/api/profile/findfriend', {
                     params: { findfriend: value }
                 });
                 setFindfriends(res.data);
@@ -163,7 +164,7 @@ const Profile = () => {
     //adding friend section
     async function addfriend(username) {
         try {
-            const res = await axios.post('/api/profile/add-friend', {
+            const res = await axiosInstance.post('/api/profile/add-friend', {
                 username
             });
             toast(res.data.message);
