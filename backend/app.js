@@ -48,7 +48,7 @@ const allowedOrigins = [
     'http://localhost:5173',
     FRONTEND_URL,
     ADMIN_URL
-].filter(Boolean);
+].filter(Boolean).map(url => url.replace(/\/$/, ""));
 
 app.use(cors({
     origin: (origin, callback) => {
@@ -84,6 +84,7 @@ const ADMIN = {
 
 const adminOptions = {
     resources: [Problem, User, submission, Problemdiscussion, messageuser],
+    rootPath: '/admin',
 }
 
 const admin = new AdminJS(adminOptions)
