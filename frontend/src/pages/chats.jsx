@@ -18,7 +18,7 @@ const Chats = () => {
         if (res.data.status === false) {
           navigate('/login');
         }
-        setFriends(res.data.friends);
+        setFriends(res.data.friends || []);
         console.log(res.data.friends);
       }
       findfrineds();
