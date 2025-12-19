@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import { useState } from "react"
 import axios from 'axios.config';
 import Cookies from 'js-cookie';
 
-const LoginPage =  function LoginForm({
+const LoginPage = function LoginForm({
   email,
   password
 }) {
@@ -28,12 +28,12 @@ const LoginPage =  function LoginForm({
     try {
       const response = await axios.post('http://localhost:3002/api/login', { email: userEmail, password: userPassword });
       const { token, message } = response.data;
-      
+
       if (token) {
         Cookies.set('token', token, { expires: 7 }); // Cookie expires in 7 days
         navigate('/'); // Redirect to home or dashboard
       } else {
-        alert({message:"somthing went wrong"});
+        alert({ message: "somthing went wrong" });
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || "An error occurred during login.";
@@ -74,13 +74,13 @@ const LoginPage =  function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
+                <Input
+                  id="password"
+                  type="password"
                   required
                   value={userPassword}
                   onChange={(e) => setUserPassword(e.target.value)}
-                  />
+                />
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" onClick={handleSubmit}>
@@ -93,9 +93,9 @@ const LoginPage =  function LoginForm({
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <a href="/register" className="underline underline-offset-4">
+              <Link to="/register" className="underline underline-offset-4">
                 Sign up
-              </a>
+              </Link>
             </div>
           </form>
         </CardContent>
