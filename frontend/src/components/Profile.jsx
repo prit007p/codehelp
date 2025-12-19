@@ -10,7 +10,7 @@ const Profile = () => {
   const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
   const [role, setRole] = useState(null);
-  const [activeTab, setActiveTab] = useState('profile'); 
+  const [activeTab, setActiveTab] = useState('profile');
 
   const showToast = ({ title, description, status }) => {
     if (title) alert(`${title}${description ? '\n' + description : ''}`);
@@ -28,7 +28,7 @@ const Profile = () => {
 
       try {
         const response = await axios.get('/api/profile', token);
-        if(response.data.status === false){
+        if (response.data.status === false) {
           setLoading(false);
           navigate('/login');
           return;
@@ -118,17 +118,18 @@ const Profile = () => {
     );
   }
 
-  const totalProblems = userProfile.problemsSolved.length;
-  const acceptedProblems = userProfile.problemsSolved.filter(p => p.status === 'Accepted').length;
-  const wrongAnswerProblems = userProfile.problemsSolved.filter(p => p.status === 'Wrong Answer').length;
-  const timeLimitExceededProblems = userProfile.problemsSolved.filter(p => p.status === 'Time Limit Exceeded').length;
-  const runtimeErrorProblems = userProfile.problemsSolved.filter(p => p.status === 'Runtime Error').length;
+  const problemsSolved = userProfile.problemsSolved || [];
+  const totalProblems = problemsSolved.length;
+  const acceptedProblems = problemsSolved.filter(p => p.status === 'Accepted').length;
+  const wrongAnswerProblems = problemsSolved.filter(p => p.status === 'Wrong Answer').length;
+  const timeLimitExceededProblems = problemsSolved.filter(p => p.status === 'Time Limit Exceeded').length;
+  const runtimeErrorProblems = problemsSolved.filter(p => p.status === 'Runtime Error').length;
 
   return (
     <div className="container mx-auto p-4 pt-20 min-h-screen bg-gray-100">
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <div className="flex items-center space-x-6">
-          <img 
+          <img
             src={`https://ui-avatars.com/api/?name=${userProfile.username.charAt(0)}&background=random&color=fff`}
             alt="User Avatar"
             className="w-24 h-24 rounded-full border-4 border-blue-400 object-cover"
@@ -246,7 +247,7 @@ const Profile = () => {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Friend Requests</h2>
-                {friendRequests.length > 0 ? (
+                {Array.isArray(friendRequests) && friendRequests.length > 0 ? (
                   <div className="space-y-3">
                     {friendRequests.map(request => (
                       <div key={request._id} className="flex items-center justify-between bg-gray-50 p-3 rounded-md shadow-sm">
@@ -275,11 +276,11 @@ const Profile = () => {
 
               <div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Friends</h2>
-                {friends.length > 0 ? (
+                {Array.isArray(friends) && friends.length > 0 ? (
                   <div className="space-y-3">
                     {friends.map(friend => (
                       <div key={friend._id} className="flex items-center bg-gray-50 p-3 rounded-md shadow-sm">
-                        <img 
+                        <img
                           src={`https://ui-avatars.com/api/?name=${friend.username.charAt(0)}&background=random&color=fff`}
                           alt="Friend Avatar"
                           className="w-9 h-9 rounded-full mr-3 object-cover"

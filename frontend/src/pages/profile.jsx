@@ -33,10 +33,10 @@ const Profile = () => {
     const [findfriend, setFindfriends] = useState([]);
     const [editUsername, setEditUsername] = useState("");
     const [editEmail, setEditEmail] = useState("");
-    const [friends,setFriends] = useState(0);
+    const [friends, setFriends] = useState(0);
     const [avatarFile, setAvatarFile] = useState(null);
-    const [totalSubmissions,setTotalSubmission] = useState(0);
-    const [acceptedSubmissions,setAcceptedSubmission] = useState(0);
+    const [totalSubmissions, setTotalSubmission] = useState(0);
+    const [acceptedSubmissions, setAcceptedSubmission] = useState(0);
     const navigate = useNavigate();
 
     const token = Cookies.get("token");
@@ -49,7 +49,7 @@ const Profile = () => {
                 if (res.data.status === false) {
                     navigate('/login');
                 }
-                if (res.data ) {
+                if (res.data) {
                     setUser(res.data);
                     setEditUsername(res.data.username);
                     setEditEmail(res.data.email);
@@ -71,8 +71,9 @@ const Profile = () => {
         fetchuser();
         const fetchsubmission = async () => {
             const submissions = await axiosInstance.get('/api/problems/submission');
-            setTotalSubmission(submissions.data.length);
-            const count = submissions.data.filter(obj => obj.status === "accepted").length;
+            const submissionsData = submissions.data || [];
+            setTotalSubmission(submissionsData.length);
+            const count = submissionsData.filter(obj => obj.status === "accepted").length;
             setAcceptedSubmission(count);
         }
         fetchsubmission();
@@ -189,7 +190,7 @@ const Profile = () => {
                     <div className=' flex flex-col gap-1'>
                         <p className='font-semibold text-muted-foreground'>Email : {user?.email}</p>
                         <p className='font-semibold text-muted-foreground'>Total Submissions : {totalSubmissions}</p>
-                        <p className='font-semibold text-muted-foreground'>Accepted Submissions : {acceptedSubmissions }</p>
+                        <p className='font-semibold text-muted-foreground'>Accepted Submissions : {acceptedSubmissions}</p>
                         <p className='font-semibold text-muted-foreground'> Friends : {user?.friends?.length}</p>
                         <a className='font-semibold text-primary'> My friends</a>
                         {/*edit section*/}

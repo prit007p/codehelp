@@ -13,8 +13,8 @@ const ChatPage = () => {
   const [socket, setSocket] = useState(null);
   const messagesEndRef = useRef(null);
   const [user, setUser] = useState(null);
-  
-  const [roomid,setRoomid] = useState('');
+
+  const [roomid, setRoomid] = useState('');
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -38,14 +38,14 @@ const ChatPage = () => {
       }
     }
     fetchuser();
-  }, [id]); 
+  }, [id]);
 
 
   // Fetch chat history
   useEffect(() => {
     async function fetchMessages() {
       try {
-        const res = await axios.get(`/api/psl_msg/messages/${id}`); 
+        const res = await axios.get(`/api/psl_msg/messages/${id}`);
         setMessages(res.data);
       } catch (err) {
         setMessages([]);
@@ -62,7 +62,7 @@ const ChatPage = () => {
 
     newSocket.on('connect', () => {
       console.log("user is connected");
-      newSocket.emit("join-pslroom",roomid);
+      newSocket.emit("join-pslroom", roomid);
     });
 
     newSocket.on('per_msg', (msg) => {
@@ -115,7 +115,7 @@ const ChatPage = () => {
         </div>
       </div>
       <div className="flex-1 flex flex-col bg-card rounded-lg shadow-md p-4 overflow-y-auto mb-4">
-        {messages.length === 0 ? (
+        {!Array.isArray(messages) || messages.length === 0 ? (
           <p className="text-muted-foreground text-center">No messages yet. Start the conversation!</p>
         ) : (
           messages.map((msg, idx) => (

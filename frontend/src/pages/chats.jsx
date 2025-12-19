@@ -39,7 +39,7 @@ const Chats = () => {
       </CardHeader>
       <CardContent className="px-4">
         <div className="space-y-4">
-          {friends.length > 0 ? (
+          {Array.isArray(friends) && friends.length > 0 ? (
             friends.map((friend) => (
               <Card key={friend._id} onClick={() => { openChat(friend) }} className="flex items-center space-x-4 bg-card text-card-foreground p-4 rounded-lg shadow-md">
                 {friend.avatar ? (
