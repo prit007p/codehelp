@@ -31,7 +31,7 @@ const LoginPage = function LoginForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3002/api/login', { email: userEmail, password: userPassword });
+     const response = await axios.post('/api/login', { email: userEmail, password: userPassword });
       const { token, message } = response.data;
 
       if (token) {
@@ -98,7 +98,7 @@ const LoginPage = function LoginForm({
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Button onClick={handleregister} className="underline underline-offset-4">
+              <Button type="button" onClick={handleregister} className="underline underline-offset-4">
                 Sign up
               </Button>
             </div>
