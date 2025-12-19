@@ -31,6 +31,7 @@ const PORT = process.env.PORT || 3002;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ADMIN_URL = process.env.ADMIN_URL;
 
 AdminJS.registerAdapter({
     Resource: AdminJSMongoose.Resource,
@@ -45,7 +46,8 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5173',
-    FRONTEND_URL
+    FRONTEND_URL,
+    ADMIN_URL
 ].filter(Boolean);
 
 app.use(cors({
