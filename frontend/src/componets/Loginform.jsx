@@ -23,6 +23,11 @@ const LoginPage = function LoginForm({
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
 
+  const handleregister = () => {
+    console.log("go  to register")
+    navigate('/register');
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -93,9 +98,9 @@ const LoginPage = function LoginForm({
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link to="/register" className="underline underline-offset-4">
+              <Button onClick={handleregister} className="underline underline-offset-4">
                 Sign up
-              </Link>
+              </Button>
             </div>
           </form>
         </CardContent>
