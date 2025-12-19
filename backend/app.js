@@ -43,6 +43,7 @@ mongoose.connect(mongoUri)
 
 const allowedOrigins = [
     'http://localhost:3000',
+    'http://localhost:3001',
     'http://localhost:5173',
     FRONTEND_URL
 ].filter(Boolean);
@@ -85,7 +86,7 @@ const adminOptions = {
 
 const admin = new AdminJS(adminOptions)
 const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
-    authenticate: async(email, password) => {
+    authenticate: async (email, password) => {
         if (ADMIN.password === password && ADMIN.email === email) {
             return ADMIN
         }
