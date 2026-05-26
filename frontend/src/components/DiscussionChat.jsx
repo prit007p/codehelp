@@ -1,45 +1,53 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import axios from 'axios.config';
-import Cookies from 'js-cookie';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@clerk/react';
+
+const socketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 'http://localhost:3002';
 
 const DiscussionChat = ({ problemId }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
   const messagesEndRef = useRef(null);
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const token = Cookies.get('token');
   useEffect(() => {
 
     console.log(problemId);
-    if (problemId) {
-      const newSocket = io('http://localhost:3002', { query: { problemId } });
-      setSocket(newSocket);
+    if (problemId && isLoaded && isSignedIn) {
+      let newSocket;
 
-      newSocket.on('connect', () => {
-        console.log('Connected to socket.io');
-        newSocket.emit('join_discussion_room',problemId);
-      });
+      async function connectSocket() {
+        const token = await getToken();
+        newSocket = io(socketUrl, { query: { problemId }, auth: { token } });
+        setSocket(newSocket);
+
+        newSocket.on('connect', () => {
+          console.log('Connected to socket.io');
+          newSocket.emit('join_discussion_room', problemId);
+        });
 
 
-      newSocket.on('receive_discussion_message', (message) => {
-        setMessages((prevMessages) => [...prevMessages, message]);
-      });
+        newSocket.on('receive_discussion_message', (message) => {
+          setMessages((prevMessages) => [...prevMessages, message]);
+        });
+      }
+
+      connectSocket();
 
       return () => {
-        newSocket.disconnect();
+        if (newSocket) newSocket.disconnect();
       };
     }
-  }, [problemId]);
+  }, [problemId, getToken, isLoaded, isSignedIn]);
 
   useEffect(() => {
     scrollToBottom();
@@ -60,7 +68,7 @@ const DiscussionChat = ({ problemId }) => {
 
   const sendMessage = () => {
     if (socket && newMessage.trim()) {
-      socket.emit('send_discussion_message',{discussionId:problemId,text:newMessage,timestamp:new Date(),token:token});
+      socket.emit('send_discussion_message', { discussionId: problemId, text: newMessage, timestamp: new Date() });
       setNewMessage('');
       fetchMessages();
     }

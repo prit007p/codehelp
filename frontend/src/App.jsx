@@ -1,48 +1,73 @@
-import Solution from './routes/Solution';
-import Profile from './pages/profile';
-import Home from './pages/Home';
-import LoginPage from './pages/LoginPage';
 import Navbar from './components/Navbar';
-import ProblemslistPage from './pages/ProblemslistPage';
-import RegisterPage from './pages/RegisterPage';
-import SingleProblemPage from './pages/SingleProblemPage';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Landing from './pages/Landing';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, useTheme } from "@/components/theme-provider"
-import Chats from './pages/chats';
-import ChatPage from './pages/ChatPage';
-import SubmissionPage from './pages/SubmissionPage';
+import { RedirectToSignIn, useAuth } from '@clerk/react';
+import { lazy, Suspense } from 'react';
 
 import { Toaster } from 'sonner';
+
+const Solution = lazy(() => import('./routes/Solution'));
+const Profile = lazy(() => import('./pages/profile'));
+const Home = lazy(() => import('./pages/Home'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const ProblemslistPage = lazy(() => import('./pages/ProblemslistPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const SingleProblemPage = lazy(() => import('./pages/SingleProblemPage'));
+const Landing = lazy(() => import('./pages/Landing'));
+const Chats = lazy(() => import('./pages/chats'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
+const SubmissionPage = lazy(() => import('./pages/SubmissionPage'));
 
 function ThemedToaster() {
   const { theme } = useTheme();
   return <Toaster theme={theme === "system" ? undefined : theme} />;
 }
 
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      Loading...
+    </div>
+  );
+}
+
+function RequireAuth({ children }) {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  if (!isLoaded) {
+    return <PageLoader />;
+  }
+
+  if (!isSignedIn) {
+    return <RedirectToSignIn />;
+  }
+
+  return children;
+}
+
 function App() {
-  const navbarHeight = '4.5rem';
   const location = useLocation();
   const showNavbar = !location.pathname.startsWith("/login") && !location.pathname.startsWith("/register");
-  const applyPaddingTop = showNavbar && location.pathname !== '/Chats';
 
   return (
     <>
       {showNavbar && <Navbar />}
       <div className="w-full">
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Home />} />
-          <Route path='/Landing' element={<Landing />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/solution" element={<Solution />} />
-          <Route path="/problems" element={<ProblemslistPage />} />
-          <Route path="/problem/:problemId" element={<SingleProblemPage />} />
-          <Route path='/register' element={<RegisterPage />} />
-          <Route path='/Chats' element={<Chats />} />
-          <Route path="/chat/:id" element={<ChatPage />} />
-          <Route path="/submission" element={<SubmissionPage />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/login/*" element={<LoginPage />} />
+            <Route path="/" element={<Home />} />
+            <Route path='/Landing' element={<Landing />} />
+            <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+            <Route path="/solution" element={<RequireAuth><Solution /></RequireAuth>} />
+            <Route path="/problems" element={<RequireAuth><ProblemslistPage /></RequireAuth>} />
+            <Route path="/problem/:problemId" element={<RequireAuth><SingleProblemPage /></RequireAuth>} />
+            <Route path='/register/*' element={<RegisterPage />} />
+            <Route path='/Chats' element={<RequireAuth><Chats /></RequireAuth>} />
+            <Route path="/chat/:id" element={<RequireAuth><ChatPage /></RequireAuth>} />
+            <Route path="/submission" element={<RequireAuth><SubmissionPage /></RequireAuth>} />
+          </Routes>
+        </Suspense>
       </div>
       <ThemedToaster />
     </>

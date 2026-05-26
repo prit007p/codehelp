@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import axios from 'axios';
+import { executeCode } from '../other/pistonClient.js';
 
 router.post('/', async (req, res) => {
   const { testCase } = req.body;
@@ -11,11 +11,14 @@ router.post('/', async (req, res) => {
     stdin: testCase.input || '',
   };
   try {
-    const pistonResponse = await axios.post('https://emkc.org/api/v2/piston/execute', pistonPayload);
-    res.json({ message: "Test case received", output: pistonResponse.data.run});
+    const pistonResponse = await executeCode(pistonPayload);
+    res.json({ message: "Test case received", output: pistonResponse.run});
   } catch (error) {
-    console.error("Error calling Piston API:", error.message,testCase);
-    res.status(500).json({ message: "Failed to compile/execute code ", error: error.message });
+    console.error("Error calling Piston API:", error.upstream || error.message, testCase);
+    res.status(error.status || 500).json({
+      message: error.message,
+      error: error.message
+    });
   }
 });
 

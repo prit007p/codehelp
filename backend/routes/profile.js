@@ -4,12 +4,10 @@ import User from '../models/User.js';
 
 router.get('/', async(req, res) => {
     try {
-        const username = req.user.username;
-        const user = await User.findOne({ username });
+        const user = await User.findById(req.user.userId).populate('friends', 'username email avatar');
         if (!user) {
-            return res.json({ message: 'token expired', status: false });
+            return res.status(401).json({ message: 'User not found', status: false });
         }
-        console.log("Fetched user profile:", user);
         res.json(user);
     } catch (error) {
         console.error("Error fetching user profile:", error);
@@ -19,10 +17,9 @@ router.get('/', async(req, res) => {
 
 router.put('/', async(req, res) => {
     const { username, email, avatar } = req.body;
-    const currentUsername = req.user.username;
 
     try {
-        const userToUpdate = await User.findOne({ username: currentUsername });
+        const userToUpdate = await User.findById(req.user.userId);
 
         if (!userToUpdate) {
             return res.status(404).json({ message: 'User not found' });
@@ -58,10 +55,9 @@ router.put('/', async(req, res) => {
 
 router.post('/add-friend', async(req, res) => {
     const username = req.body.username;
-    const currentUserId = req.user.username;
 
     try {
-        const currentUser = await User.findOne({ username: currentUserId });
+        const currentUser = await User.findById(req.user.userId);
         const friendToAdd = await User.findOne({ username });
         if (!currentUser || !friendToAdd) {
             return res.json({ message: 'User or friend not found' });
@@ -72,7 +68,7 @@ router.post('/add-friend', async(req, res) => {
         }
 
         if (!Array.isArray(currentUser.friends)) currentUser.friends = [];
-        if (currentUser.friends.includes(friendToAdd._id)) {
+        if (currentUser.friends.some(friendId => friendId.equals(friendToAdd._id))) {
             return res.json({ message: 'Already friends with this user' });
         }
 
@@ -99,7 +95,7 @@ router.get('/findfriend', async(req, res) => {
                 { username: { $regex: query, $options: 'i' } },
                 { email: { $regex: query, $options: 'i' } }
             ]
-        }).select('username email');
+        }).select('username email avatar');
         res.json(users);
     } catch (err) {
         console.error('Error searching users from profile:', err);

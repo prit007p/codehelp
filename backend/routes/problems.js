@@ -2,10 +2,10 @@ import express from 'express';
 const router = express.Router();
 import Problem from '../models/Problem.js';
 import Message from '../models/problemdiscussion.js';
-import axios from 'axios';
 import SubmissionModel from '../models/submission.js';
 import mongoose from 'mongoose';
 import User from '../models/User.js';
+import { executeCode } from '../other/pistonClient.js';
 
 
 router.get('/', async (req, res) => {
@@ -29,6 +29,24 @@ router.get('/submission',async (req, res) => {
     console.log("error in frtching submission",err);
   }
   
+});
+
+router.get('/submission/:submissionId', async (req, res) => {
+  try {
+    const submission = await SubmissionModel.findOne({
+      _id: req.params.submissionId,
+      userId: req.user.userId,
+    });
+
+    if (!submission) {
+      return res.status(404).json({ message: 'Submission not found' });
+    }
+
+    res.json(submission);
+  } catch (err) {
+    console.error("error in fetching submission", err);
+    res.status(500).json({ message: 'Server error while fetching submission' });
+  }
 });
 
 router.get('/:problemId', async (req, res) => {
@@ -66,9 +84,11 @@ router.get('/:problemId/discussions', async (req, res) => {
 router.post('/:problemId/submit', async (req, res) => {
   try {
     const { language, version, files} = req.body;
-    const username = req.user.username;
-    const user = await User.findOne({username});
+    const user = await User.findById(req.user.userId);
 
+    if (!user) {
+      return res.status(401).json({ error: 'User not found.' });
+    }
 
     if (!language || !version || !files || !Array.isArray(files) || files.length === 0 || !files[0].content) {
       return res.status(400).json({ error: 'Missing required fields: language, version, or file content.' });
@@ -95,9 +115,9 @@ router.post('/:problemId/submit', async (req, res) => {
           stdin: testCase.input || '',
         };
 
-        const pistonResponse = await axios.post('https://emkc.org/api/v2/piston/execute', pistonPayload);
+        const pistonResponse = await executeCode(pistonPayload);
 
-        const output = pistonResponse.data.run.stdout || '';
+        const output = pistonResponse.run.stdout || '';
         if (output.trim() === testCase.output.trim()) {
           result.push({
             input: testCase.input,
@@ -108,7 +128,7 @@ router.post('/:problemId/submit', async (req, res) => {
           user.acceptedSubmissions++; 
           user.totalSubmissions++;
         }
-        else if (pistonResponse.data.run.stderr) {
+        else if (pistonResponse.run.stderr) {
           result.push({
             input: testCase.input,
             output: output,
@@ -134,23 +154,23 @@ router.post('/:problemId/submit', async (req, res) => {
         }
         
       } catch (err) {
-        console.error('Error calling Piston API:', err.response ? err.response.data : err.message);
-        if (err.response && err.response.data && err.response.data.message) {
-          return res.status(err.response.status || 500).json({ error: err.response.data.message });
-        }
-        return res.status(500).json({ error: 'Failed to compile or execute code via Piston API.' });
+        console.error('Error calling Piston API:', err.upstream || err.message);
+        return res.status(err.status || 500).json({
+          message: err.message,
+          error: err.message
+        });
       }
     }
     console.log(result);
     const userId = req.user.userId;
     const code = files[0].content;
-    const userDoc = await User.findById(userId);
     const problemDoc = await Problem.findById(problemId);
+    await user.save();
     const newSubmission = new SubmissionModel({
       problemId,
       problemname:problemDoc.problemName,
       userId,
-      username:userDoc.username,
+      username:user.username,
       code,
       language,
       status,

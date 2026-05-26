@@ -379,7 +379,7 @@ const SingleProblemPage = () => {
                                   <td className="px-4 py-2 font-medium">{sub.problemname}</td>
                                   <td className="px-4 py-2">{sub.status}</td>
                                   <td className="px-4 py-2">{sub.language}</td>
-                                  <td className="px-4 py-2">{new Date(sub.timestamp).toLocaleString()}</td>
+                                  <td className="px-4 py-2">{new Date(sub.createdAt).toLocaleString()}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -486,7 +486,7 @@ const SingleProblemPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="rounded-lg p-4 shadow-sm"><CardContent className="p-0"><strong>Status:</strong> <span className={`font-semibold ${selectedSubmission.status === 'Accepted' ? 'text-green-600' : 'text-red-600'}`}>{selectedSubmission.status}</span></CardContent></Card>
                 <Card className="rounded-lg p-4 shadow-sm"><CardContent className="p-0"><strong>Language:</strong> {selectedSubmission.language}</CardContent></Card>
-                <Card className="rounded-lg p-4 shadow-sm"><CardContent className="p-0"><strong>Submitted At:</strong> {new Date(selectedSubmission.timestamp).toLocaleString()}</CardContent></Card>
+                <Card className="rounded-lg p-4 shadow-sm"><CardContent className="p-0"><strong>Submitted At:</strong> {new Date(selectedSubmission.createdAt).toLocaleString()}</CardContent></Card>
                 {selectedSubmission.remark && <Card className="rounded-lg p-4 shadow-sm"><CardContent className="p-0"><strong>Remark:</strong> {selectedSubmission.remark}</CardContent></Card>}
               </div>
               <Card className="rounded-lg p-4 shadow-sm">

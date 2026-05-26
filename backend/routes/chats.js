@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/',async (req,res)=>{
     const username = req.user.username;
     try{
-        const user = await User.findOne({username});
+        const user = await User.findById(req.user.userId).populate('friends', 'username email avatar');
         const friendsWithLastMessage = await Promise.all(user.friends.map(async (friend) => {
             const lastMessage = await message.findOne({
                 $or: [

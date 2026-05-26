@@ -23,7 +23,7 @@ const Solution = () => {
 
     const fetchSolution = async () => {
       try {
-        const response = await axios.get(`http://localhost:3002/api/submissions/${submissionId}`);
+        const response = await axios.get(`/api/problems/submission/${submissionId}`);
         setSolutionDetails(response.data);
         setIsLoading(false);
       } catch (err) {
