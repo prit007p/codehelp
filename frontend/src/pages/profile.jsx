@@ -1,16 +1,15 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import axiosInstance from 'axios.config';
 import axios from 'axios';
-import Cookies from 'js-cookie'
 import React, { useEffect, useState } from 'react'
 import { toast } from "sonner"
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { User, Search, Mail, Calendar, Users, CheckCircle, XCircle, MessageCircle, Settings, LogOut, Camera, UserPlus } from 'lucide-react'
-import { useTheme } from '@/components/theme-provider'
 import ModeToggle from '@/components/Themechanger'
 import { useNavigate } from 'react-router-dom'
 import { Label } from '@/components/ui/label'
+import { useClerk } from '@clerk/react'
 
 const Profile = () => {
     const [user, setUser] = useState({});
@@ -26,12 +25,11 @@ const Profile = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [searchLoading, setSearchLoading] = useState(false);
     const navigate = useNavigate();
-
-    const token = Cookies.get("token");
-    const { theme } = useTheme();
+    const { signOut } = useClerk();
 
     // Calculate acceptance rate
     const acceptanceRate = totalSubmissions > 0 ? Math.round((acceptedSubmissions / totalSubmissions) * 100) : 0;
+    const memberSince = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Recently';
 
     useEffect(() => {
         const fetchuser = async () => {
@@ -68,7 +66,7 @@ const Profile = () => {
                 const submissions = await axiosInstance.get('/api/problems/submission');
                 const submissionsData = submissions.data || [];
                 setTotalSubmission(submissionsData.length);
-                const count = submissionsData.filter(obj => obj.status === "accepted").length;
+                const count = submissionsData.filter(obj => obj.status === "Accepted").length;
                 setAcceptedSubmission(count);
             } catch (err) {
                 console.log("Error fetching submissions", err);
@@ -82,9 +80,7 @@ const Profile = () => {
 
         if (avatarFile) {
             try {
-                const signatureRes = await axiosInstance.get('/api/get-signature', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const signatureRes = await axiosInstance.get('/api/get-signature');
                 const { signature, timestamp, api_key, cloud_name, folder } = signatureRes.data;
 
                 const formData = new FormData();
@@ -114,8 +110,6 @@ const Profile = () => {
                 username: editUsername,
                 email: editEmail,
                 avatar: avatarUrl,
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
             });
             setUser(res.data);
             setEditUsername(res.data.username);
@@ -147,10 +141,9 @@ const Profile = () => {
         }
     }
 
-    const handleLogout = () => {
-        Cookies.remove("token");
+    const handleLogout = async () => {
         toast.success("Logged out successfully.");
-        navigate("/login");
+        await signOut({ redirectUrl: "/login" });
     };
 
     async function addfriend(username) {
@@ -221,7 +214,7 @@ const Profile = () => {
                                     </span>
                                     <span className="flex items-center gap-2">
                                         <Calendar className="w-4 h-4" />
-                                        Member since {new Date(user?.createdAt).toLocaleDateString()}
+                                        Member since {memberSince}
                                     </span>
                                 </div>
 

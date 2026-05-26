@@ -1,25 +1,54 @@
 import problemDiscussionSchema from '../models/problemdiscussion.js';
-import jwt from 'jsonwebtoken';
 import 'dotenv/config.js';
 import PsL_msg_model from '../models/psL_msg_model.js';
 import User from '../models/User.js';
+import { verifyToken } from '@clerk/backend';
+import { getOrCreateUserFromClerk } from './clerkUser.js';
 
-const JWT_KEY = process.env.secret_key;
+const getVerifyOptions = (allowedOrigins) => {
+    const options = {
+        secretKey: process.env.CLERK_SECRET_KEY,
+        authorizedParties: allowedOrigins,
+    };
 
-const discussion_socket_io = (io) => {
+    if (process.env.CLERK_JWT_KEY) {
+        options.jwtKey = process.env.CLERK_JWT_KEY;
+    }
+
+    return options;
+};
+
+const discussion_socket_io = (io, allowedOrigins = []) => {
+    io.use(async (socket, next) => {
+        try {
+            const token = socket.handshake.auth?.token;
+            if (!token) {
+                return next(new Error('Authentication required'));
+            }
+
+            const verifiedToken = await verifyToken(token, getVerifyOptions(allowedOrigins));
+            const appUser = await getOrCreateUserFromClerk(verifiedToken.sub);
+
+            socket.clerkUserId = verifiedToken.sub;
+            socket.appUser = appUser;
+            next();
+        } catch (err) {
+            console.error('Socket authentication failed:', err.message);
+            next(new Error('Authentication failed'));
+        }
+    });
+
     io.on('connection', (socket) => {
 
-        socket.on('send_discussion_message', ({ discussionId, text, timestamp, token }) => {
-            const decode = jwt.verify(token, JWT_KEY);
-            const username = decode.username;
+        socket.on('send_discussion_message', async ({ discussionId, text, timestamp }) => {
+            const username = socket.appUser.username;
             const newDiscussionMessage = new problemDiscussionSchema({
                 discussionId,
                 username,
                 text,
                 timestamp
             });
-            console.log(newDiscussionMessage);
-            newDiscussionMessage.save();
+            await newDiscussionMessage.save();
 
             socket.to(discussionId).emit('receive_discussion_message', {
                 username,
@@ -37,7 +66,8 @@ const discussion_socket_io = (io) => {
         })
         
         socket.on('prsnl_msg', async (data) => {
-            const { roomid, senderId, reciverId, msg } = data;
+            const { roomid, reciverId, msg } = data;
+            const senderId = socket.appUser._id;
 
             const sender = await User.findById(senderId);
             const receiver = await User.findById(reciverId);

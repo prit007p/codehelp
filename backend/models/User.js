@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
+  clerkId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
   username: {
     type: String,
     required: true,
@@ -16,7 +21,6 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   location: {
     type: String,
@@ -45,7 +49,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
   }
-});
+}, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
 

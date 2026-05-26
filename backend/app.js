@@ -13,6 +13,7 @@ import cookieParser from 'cookie-parser';
 import profile from './routes/profile.js';
 import discussion_socket_io from './other/discussion_socketio.js';
 import middleware from './other/middleware.js';
+import { clerkMiddleware } from '@clerk/express';
 import compileRoutes from './routes/compile.js';
 import chats from './routes/chats.js';
 import psl_msg from './routes/psl_msg.js';
@@ -33,6 +34,17 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const ADMIN_URL = process.env.ADMIN_URL;
 
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
+    'http://127.0.0.1:5173',
+    FRONTEND_URL,
+    ADMIN_URL
+].filter(Boolean).map(url => url.replace(/\/$/, ""));
+
 AdminJS.registerAdapter({
     Resource: AdminJSMongoose.Resource,
     Database: AdminJSMongoose.Database,
@@ -42,13 +54,9 @@ mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:5173',
-    FRONTEND_URL,
-    ADMIN_URL
-].filter(Boolean).map(url => url.replace(/\/$/, ""));
+app.use(clerkMiddleware({
+    authorizedParties: allowedOrigins,
+}));
 
 app.use(cors({
     origin: (origin, callback) => {
@@ -112,7 +120,7 @@ app.use('/api/login', login);
 app.use('/api/chats', middleware, chats);
 app.use('/api/psl_msg', middleware, psl_msg);
 
-discussion_socket_io(io);
+discussion_socket_io(io, allowedOrigins);
 
 server.listen(PORT, () => {
     console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`)

@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useNavigate } from "react-router-dom"
-import Profile from "./Profile"
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/react"
 
 function ModeToggle() {
   const { setTheme } = useTheme()
@@ -112,15 +112,26 @@ function Navbar() {
           ))}
         </nav>
         <div className="flex items-center gap-4 ">
-          <motion.button
-          whileHover={{ scale: 1.05 }}
-          className="font-medium text-sm px-1 text-primary"
-          onClick={()=>{
-            if (navRoutes["Profile"]) navigate(navRoutes["Profile"])
-          }}
-          >
-            Profile
-          </motion.button>
+          <Show when="signed-in">
+            <motion.button
+            whileHover={{ scale: 1.05 }}
+            className="font-medium text-sm px-1 text-primary"
+            onClick={()=>{
+              if (navRoutes["Profile"]) navigate(navRoutes["Profile"])
+            }}
+            >
+              Profile
+            </motion.button>
+            <UserButton />
+          </Show>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <Button variant="ghost" size="sm">Login</Button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button size="sm">Register</Button>
+            </SignUpButton>
+          </Show>
           <ModeToggle />
         </div>
       </div>
