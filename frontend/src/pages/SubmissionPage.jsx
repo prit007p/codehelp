@@ -33,8 +33,8 @@ const SubmissionPage = () => {
     fetchSubmission();
   }, []);
   return (
-    <div className="container mx-auto p-4 bg-background">
-      <h1 className="text-3xl font-bold mb-6">My Submissions</h1>
+    <div className="mx-auto min-h-screen max-w-6xl bg-background px-3 py-6 pt-20 sm:px-5 lg:px-6">
+      <h1 className="mb-6 text-2xl font-bold sm:text-3xl">My Submissions</h1>
 
       {isLoadingSubmissions && <p>Loading submissions...</p>}
       {errorSubmissions && <p className="text-red-500">Error: {errorSubmissions}</p>}
@@ -45,17 +45,17 @@ const SubmissionPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {submissions.map((submission) => (
-          <Card key={submission._id} className="">
+          <Card key={submission._id} className="min-w-0">
             <CardHeader>
-              <CardTitle>{submission.problemname}</CardTitle>
+              <CardTitle className="break-words text-xl">{submission.problemname}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p><strong>Language:</strong> {submission.language}</p>
-              <p><strong>Status:</strong> {submission.status}</p>
-              <p><strong>Remark:</strong> {submission.remark || 'N/A'}</p>
+            <CardContent className="space-y-1">
+              <p className="break-words"><strong>Language:</strong> {submission.language}</p>
+              <p className="break-words"><strong>Status:</strong> {submission.status}</p>
+              <p className="break-words"><strong>Remark:</strong> {submission.remark || 'N/A'}</p>
               <Button
                 onClick={() => setSelectedSubmission(submission)}
-                className="mt-4"
+                className="mt-4 w-full sm:w-auto"
               >
                 View Details
               </Button>
@@ -65,16 +65,16 @@ const SubmissionPage = () => {
       </div>
 
       {selectedSubmission && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Submission Details for {selectedSubmission.problemname}</CardTitle>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-600/50 p-3 sm:p-4">
+          <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto">
+            <CardHeader className="flex flex-row items-start justify-between gap-3">
+              <CardTitle className="break-words text-xl sm:text-2xl">Submission Details for {selectedSubmission.problemname}</CardTitle>
               <Button variant="ghost" onClick={() => setSelectedSubmission(null)}>X</Button>
             </CardHeader>
             <CardContent>
-              <p><strong>Language:</strong> {selectedSubmission.language}</p>
-              <p><strong>Status:</strong> {selectedSubmission.status}</p>
-              <p><strong>Remark:</strong> {selectedSubmission.remark || 'N/A'}</p>
+              <p className="break-words"><strong>Language:</strong> {selectedSubmission.language}</p>
+              <p className="break-words"><strong>Status:</strong> {selectedSubmission.status}</p>
+              <p className="break-words"><strong>Remark:</strong> {selectedSubmission.remark || 'N/A'}</p>
               <h3 className="text-lg font-semibold mt-4">Code:</h3>
               <pre className="bg-muted p-2 rounded overflow-x-auto">{selectedSubmission.code}</pre>
               <h3 className="text-lg font-semibold mt-4">Test Results:</h3>

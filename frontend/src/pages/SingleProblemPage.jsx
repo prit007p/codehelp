@@ -284,26 +284,27 @@ const SingleProblemPage = () => {
   const visibleExamples = problem.examples;
 
   return (
-    <Card className="min-h-screen bg-background text-foreground rounded-none shadow-none border-none  gap-4">
-      <CardContent className="p-0 md:p-4 rounded-none shadow-none border-none">
+    <Card className="min-h-screen bg-background text-foreground rounded-none border-none shadow-none">
+      <CardContent className={`grid min-w-0 grid-cols-1 gap-4 p-3 pt-5 shadow-none sm:p-4 lg:p-5 ${activeTab === "discussion" ? "xl:grid-cols-1" : "xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"}`}>
   
         {/* Left Column */}
-        <Card className="p-4 rounded-none shadow-none border-none col-span-1 ">
-          <Card className="shadow-none">
+        <Card className={`min-w-0 rounded-lg border-border/70 p-0 shadow-sm ${activeTab === "discussion" ? "" : "xl:sticky xl:top-20 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto"}`}>
+          <Card className="border-none shadow-none">
             {problem && (
-              <CardHeader>
-                <CardTitle className="text-3xl font-bold">{problem.problemName}</CardTitle>
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="break-words text-2xl font-bold leading-tight sm:text-3xl">{problem.problemName}</CardTitle>
               </CardHeader>
             )}
   
-            <CardContent className="h-fit">
-              <Card className="mb-4 shadow-none">
-                <CardContent className="flex space-x-2 p-4">
+            <CardContent className="h-fit p-3 pt-0 sm:p-5 sm:pt-0">
+              <Card className="mb-4 border-border/70 shadow-none">
+                <CardContent className="flex gap-2 overflow-x-auto p-3 sm:p-4">
                   {["problem", "submissions", "discussion"].map(tab => (
                     <Button
                       key={tab}
                       variant={activeTab === tab ? "default" : "secondary"}
                       onClick={() => setActiveTab(tab)}
+                      className="shrink-0"
                     >
                       {tab.charAt(0).toUpperCase() + tab.slice(1)}
                     </Button>
@@ -313,14 +314,14 @@ const SingleProblemPage = () => {
   
               {activeTab === "problem" && (
                 <Card className=" rounded-none shadow-none border-none">
-                  <CardContent className="space-y-4 ">
-                    <Card className=" shadow-none">
+                  <CardContent className="space-y-4 p-0">
+                    <Card className="shadow-none">
                       <CardHeader><CardTitle>Description</CardTitle></CardHeader>
-                      <CardContent>{problem.description}</CardContent>
+                      <CardContent className="whitespace-pre-wrap break-words leading-7">{problem.description}</CardContent>
                     </Card>
                     <Card className=" shadow-none">
                       <CardHeader><CardTitle>Constraints</CardTitle></CardHeader>
-                      <CardContent>{problem.constraints}</CardContent>
+                      <CardContent className="whitespace-pre-wrap break-words leading-7">{problem.constraints}</CardContent>
                     </Card>
                     <Card className=" rounded-none shadow-none border-none p-0 m-0">
                       <CardHeader  className="p-3"><CardTitle>Testcases</CardTitle></CardHeader>
@@ -330,11 +331,11 @@ const SingleProblemPage = () => {
                             <CardContent className="p-5">
                               <Card className="rounded-none shadow-none border-none p-0">
                                 <CardHeader className="p-1"><CardTitle>Input</CardTitle></CardHeader>
-                                <CardContent className="p-1">{example.input}</CardContent>
+                                <CardContent className="break-words p-1">{example.input}</CardContent>
                               </Card>
                               <Card className="rounded-none shadow-none border-none p-0">
                                 <CardHeader  className="p-1"><CardTitle>Output</CardTitle></CardHeader>
-                                <CardContent className="p-1">{example.output}</CardContent>
+                                <CardContent className="break-words p-1">{example.output}</CardContent>
                               </Card>
                             </CardContent>
                           </Card>
@@ -359,8 +360,8 @@ const SingleProblemPage = () => {
                       <p>No submissions yet.</p>
                     ) : (
                       <Card className="shadow-none">
-                        <CardContent className="overflow-x-auto">
-                          <table className="min-w-full text-sm">
+                        <CardContent className="overflow-x-auto p-0">
+                          <table className="min-w-[42rem] text-sm">
                             <thead>
                               <tr>
                                 <th className="px-4 py-2 text-left">Problem Name</th>
@@ -404,25 +405,27 @@ const SingleProblemPage = () => {
   
         {/* Right Column */}
         {activeTab !== "discussion" && (
-        <Card className="p-4 flex-col col-span-1 border-none">
+        <Card className="flex min-w-0 flex-col rounded-lg border-border/70 p-0 shadow-sm">
           <Card className="flex-1 mb-4 shadow-none">
-            <CardHeader className="flex justify-between">
-              <CardTitle>Code Editor</CardTitle>
+            <CardHeader className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+              <CardTitle className="text-xl sm:text-2xl">Code Editor</CardTitle>
               <Selector selectedLanguage={language} setSelectedLanguage={setLanguage} />
             </CardHeader>
-            <CardContent>
-              <Editor language={language.editorLanguage} input={code} height='50vh' setinput={setCode} className="min-h-[300px] border rounded" />
+            <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+              <div className="overflow-hidden rounded-md border">
+                <Editor language={language.editorLanguage} input={code} height='min(54vh, 520px)' setinput={setCode} />
+              </div>
             </CardContent>
           </Card>
   
           <Card className="shadow-none">
-            <CardHeader><CardTitle>Test Cases</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
+            <CardHeader className="p-4 sm:p-6"><CardTitle>Test Cases</CardTitle></CardHeader>
+            <CardContent className="space-y-2 p-3 pt-0 sm:p-6 sm:pt-0">
               {testCases.map((tc, idx) => (
                 <Card key={tc.id} className="shadow-none border">
-                  <CardHeader className="flex flex-row items-center justify-between cursor-pointer p-4" onClick={() => handleToggleAccordion(tc.id)}>
+                  <CardHeader className="flex cursor-pointer flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between" onClick={() => handleToggleAccordion(tc.id)}>
                     <CardTitle className="text-lg">Test Case {idx + 1}</CardTitle>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {tc.status && <span className={`px-2 py-1 rounded-full text-xs ${tc.status === 'Accepted' ? 'bg-green-500/20 text-green-600' : 'bg-destructive/20 text-destructive'}`}>{tc.status}</span>}
                       <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleDeleteTestcase(tc.id); }} className="border-destructive text-destructive hover:bg-destructive/10">
                         <FaTrash className="mr-2"/>Delete
@@ -453,16 +456,16 @@ const SingleProblemPage = () => {
                 </Card>
               ))}
             </CardContent>
-            <CardFooter className="flex justify-end space-x-2 p-4">
-              <Button onClick={handleNewTestcase} variant="outline" className="flex items-center space-x-2">
+            <CardFooter className="flex flex-col gap-2 p-3 sm:flex-row sm:justify-end sm:p-4">
+              <Button onClick={handleNewTestcase} variant="outline" className="flex w-full items-center space-x-2 sm:w-auto">
                 <FaPlus />
                 <span>Add Test Case</span>
               </Button>
-              <Button onClick={handleRunAllTestCases} disabled={isExecutingCode} className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white">
+              <Button onClick={handleRunAllTestCases} disabled={isExecutingCode} className="flex w-full items-center space-x-2 bg-blue-600 text-white hover:bg-blue-700 sm:w-auto">
                 <FaPlay />
                 <span>{isExecutingCode ? "Running All..." : "Run All Tests"}</span>
               </Button>
-              <Button onClick={handleSubmitCode} disabled={isExecutingCode} className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white">
+              <Button onClick={handleSubmitCode} disabled={isExecutingCode} className="flex w-full items-center space-x-2 bg-green-600 text-white hover:bg-green-700 sm:w-auto">
                 <FaPlay />
                 <span>{isExecutingCode ? "Submitting..." : "Submit Code"}</span>
               </Button>
@@ -474,10 +477,10 @@ const SingleProblemPage = () => {
       
       {/* Modal */}
       {isSubmissionModalOpen && selectedSubmission && (
-        <Card className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <Card className="rounded-lg shadow-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
-            <CardHeader className="flex flex-row items-center justify-between pb-4">
-              <CardTitle className="text-2xl font-bold">Submission Details</CardTitle>
+        <Card className="fixed inset-0 z-50 flex items-center justify-center rounded-none border-none bg-black/50 p-3 shadow-none sm:p-4">
+          <Card className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg p-3 shadow-xl sm:p-6">
+            <CardHeader className="flex flex-row items-start justify-between gap-3 pb-4">
+              <CardTitle className="break-words text-xl font-bold sm:text-2xl">Submission Details</CardTitle>
               <Button onClick={closeSubmissionModal} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
                 <FaTimes className="h-6 w-6" />
               </Button>

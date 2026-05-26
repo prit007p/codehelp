@@ -84,10 +84,10 @@ const Solution = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 pt-20 min-h-screen bg-background text-foreground">
-      <Card className="bg-card rounded-lg shadow-md p-6 mb-6">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold text-card-foreground mb-2">Solution for: 
+    <div className="mx-auto min-h-screen max-w-6xl bg-background px-3 py-6 pt-20 text-foreground sm:px-5 lg:px-6">
+      <Card className="mb-6 rounded-lg bg-card p-3 shadow-md sm:p-6">
+        <CardHeader className="p-0 pb-4 sm:p-6 sm:pt-0">
+          <CardTitle className="mb-2 break-words text-2xl font-bold leading-tight text-card-foreground sm:text-3xl">Solution for: 
             {problemId ? (
               <Link to={`/problem/${problemId}`} className="text-primary hover:underline">
                 {problemTitle || 'Problem'}
@@ -96,7 +96,7 @@ const Solution = () => {
               problemTitle || 'Problem'
             )}
           </CardTitle>
-          <CardContent className="flex items-center space-x-4 text-muted-foreground p-0 pt-2">
+          <CardContent className="flex flex-wrap items-center gap-3 p-0 pt-2 text-sm text-muted-foreground sm:gap-4 sm:text-base">
             <p>Language: <span className="font-semibold text-foreground">{language}</span></p>
             <p>Status: {renderStatusBadge(status)}</p>
             <p>Runtime: <span className="font-semibold text-foreground">{runtime || 'N/A'} ms</span></p>
@@ -104,13 +104,13 @@ const Solution = () => {
           </CardContent>
         </CardHeader>
 
-        <div className="border-b border-border mb-4">
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+        <div className="mb-4 border-b border-border">
+          <nav className="-mb-px flex gap-3 overflow-x-auto sm:gap-8" aria-label="Tabs">
             <Button
               variant="ghost"
               className={`
                 ${activeTab === 'code' ? 'border-b-2 border-primary text-primary' : 'border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:border-border'}
-                whitespace-nowrap py-4 px-1 font-medium text-lg focus:outline-none
+                whitespace-nowrap px-1 py-4 text-base font-medium focus:outline-none sm:text-lg
               `}
               onClick={() => setActiveTab('code')}
             >
@@ -120,7 +120,7 @@ const Solution = () => {
               variant="ghost"
               className={`
                 ${activeTab === 'testcases' ? 'border-b-2 border-primary text-primary' : 'border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:border-border'}
-                whitespace-nowrap py-4 px-1 font-medium text-lg focus:outline-none
+                whitespace-nowrap px-1 py-4 text-base font-medium focus:outline-none sm:text-lg
               `}
               onClick={() => setActiveTab('testcases')}
             >
@@ -132,7 +132,7 @@ const Solution = () => {
         <div className="mt-4">
           {activeTab === 'code' && (
             <div className="border border-border rounded-md overflow-hidden">
-              <Editor height="500px" language={language.toLowerCase()} code={code} setCode={() => {}} readOnly={true} />
+              <Editor height="min(70vh, 500px)" language={language.toLowerCase()} code={code} setCode={() => {}} readOnly={true} />
             </div>
           )}
 

@@ -75,36 +75,36 @@ const DiscussionChat = ({ problemId }) => {
   };
 
   return (
-    <Card className="flex flex-col h-full bg-card rounded-lg shadow-md p-4 ">
+    <Card className="flex h-full min-h-[28rem] flex-col rounded-lg bg-card p-3 shadow-md sm:p-4">
      
-      <CardContent className="flex flex-col gap-1 overflow-y-auto mb-4 p-4 border rounded-md border-none">
+      <CardContent className="mb-4 flex max-h-[60vh] min-h-0 flex-col gap-1 overflow-y-auto rounded-md border-none p-2 sm:p-4">
         {messages.length === 0 ? (
           <p className="text-gray-500 text-center">No messages yet. Be the first to start a discussion!</p>
         ) : (
           messages.map((msg, index) => (
-            <Card key={index} className="mb-2 p-3 rounded-lg last:mb-0">
+            <Card key={index} className="mb-2 rounded-lg p-3 last:mb-0">
               <CardContent className="p-0">
-                <div className="font-semibold text-primary text-sm">{msg.username || 'Anonymous'}:</div>
+                <div className="break-words text-sm font-semibold text-primary">{msg.username || 'Anonymous'}:</div>
                 <div className="text-foreground text-base break-words">{msg.text}</div>
-                <div className="text-right text-xs text-muted-foreground">{new Date(msg.timestamp).toLocaleString()}</div>
+                <div className="mt-1 text-right text-xs text-muted-foreground">{new Date(msg.timestamp).toLocaleString()}</div>
               </CardContent>
             </Card>
           ))
         )}
         <div ref={messagesEndRef} />
       </CardContent>
-      <CardFooter className="flex space-x-2 p-0">
+      <CardFooter className="flex flex-col gap-2 p-0 sm:flex-row">
         <Input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
           placeholder="Type your message..."
-          className="flex-1 p-2 rounded-md focus:outline-none focus:ring-2"
+          className="min-h-10 flex-1 rounded-md p-2 focus:outline-none focus:ring-2"
         />
         <Button
           onClick={sendMessage}
-          className="px-4 py-2 rounded-md transition duration-200"
+          className="w-full rounded-md px-4 py-2 transition duration-200 sm:w-auto"
         >
           Send
         </Button>
