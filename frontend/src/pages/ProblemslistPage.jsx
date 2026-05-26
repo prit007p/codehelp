@@ -120,22 +120,22 @@ const ProblemslistPage = () => {
   }
 
   return (
-    <Card className="min-h-screen bg-background text-foreground border-none rounded-none pt-16">
-      <CardHeader>
-        <h1 className="text-4xl font-extrabold text-card-foreground mb-4 text-center">Problems List</h1>
-        <p className="text-lg text-muted-foreground mb-6 text-center">Browse and solve competitive programming problems.</p>
+    <Card className="min-h-screen bg-background text-foreground border-none rounded-none px-3 py-6 pt-20 shadow-none sm:px-5 lg:px-8">
+      <CardHeader className="mx-auto w-full max-w-6xl px-0 text-center">
+        <h1 className="mb-3 text-3xl font-extrabold text-card-foreground sm:text-4xl">Problems List</h1>
+        <p className="mx-auto mb-2 max-w-2xl text-base text-muted-foreground sm:text-lg">Browse and solve competitive programming problems.</p>
       </CardHeader>
-      <CardContent>
-        <Card className="shadow-md rounded-lg p-6">
+      <CardContent className="mx-auto w-full max-w-6xl p-0">
+        <Card className="rounded-lg p-3 shadow-md sm:p-5 lg:p-6">
 
-          <div className="mb-4 flex justify-between items-center">
-            <div className="flex items-center">
-              <label htmlFor="tag-filter" className="mr-2 text-foreground">Filter by Tag:</label>
+          <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:flex lg:items-center lg:justify-between">
+            <div className="grid gap-1.5">
+              <label htmlFor="tag-filter" className="text-sm font-medium text-foreground">Filter by Tag</label>
               <select
                 id="tag-filter"
                 value={selectedTag}
                 onChange={(e) => setSelectedTag(e.target.value)}
-                className="px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring shadow-sm bg-input text-foreground"
+                className="min-h-10 w-full rounded-md border border-border bg-input px-3 py-2 text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring sm:min-w-44"
               >
                 {uniqueTags.map(tag => (
                   <option key={tag} value={tag}>{tag}</option>
@@ -143,13 +143,13 @@ const ProblemslistPage = () => {
               </select>
             </div>
 
-            <div className="flex items-center">
-              <label htmlFor="sort" className="mr-2 text-foreground">Sort by:</label>
+            <div className="grid gap-1.5">
+              <label htmlFor="sort" className="text-sm font-medium text-foreground">Sort by</label>
               <select
                 id="sort"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring shadow-sm bg-input text-foreground"
+                className="min-h-10 w-full rounded-md border border-border bg-input px-3 py-2 text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring sm:min-w-64"
               >
                 <option value="none">None</option>
                 <option value="difficulty-asc">Difficulty (Easy to Hard)</option>
@@ -165,7 +165,49 @@ const ProblemslistPage = () => {
           {filteredAndSortedProblems.length === 0 ? (
             <p className="text-center text-muted-foreground text-lg">No problems found matching your search.</p>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+            <div className="grid gap-3 md:hidden">
+              {filteredAndSortedProblems.map((problem) => (
+                <Link
+                  key={problem._id}
+                  to={`/problem/${problem._id}`}
+                  className="rounded-lg border border-border bg-card p-4 transition-colors hover:bg-muted/50"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h2 className="break-words text-base font-semibold text-primary">{problem.problemName}</h2>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {problem.tags && problem.tags.length > 0 ? (
+                          problem.tags.slice(0, 4).map((tag, index) => (
+                            <span key={index} className="rounded-full bg-accent px-2 py-1 text-xs text-accent-foreground">
+                              {tag}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-muted-foreground">No tags</span>
+                        )}
+                      </div>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-2 py-1 text-xs font-semibold ${problem.difficulty === 'Hard' ? 'bg-destructive/20 text-destructive' : problem.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-600' : 'bg-green-500/20 text-green-600'}`}>
+                      {problem.difficulty}
+                    </span>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <span className={`rounded-full px-2 py-1 text-xs font-semibold ${problem.status === 'Accepted' ? 'bg-green-500/20 text-green-600' :
+                        problem.status === 'Wrong Answer' ? 'bg-destructive/20 text-destructive' :
+                          problem.status === 'Solved' ? 'bg-blue-500/20 text-blue-600' :
+                            'bg-muted/50 text-muted-foreground'
+                      }`}>
+                      {problem.status || 'Unsolved'}
+                    </span>
+                    {problem.remark && problem.status !== 'Unsolved' && (
+                      <span className="truncate text-xs text-muted-foreground">{problem.remark}</span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
               <table className="min-w-full bg-card border border-border rounded-lg">
                 <thead className="bg-muted">
                   <tr>
@@ -216,6 +258,7 @@ const ProblemslistPage = () => {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </Card>
       </CardContent>

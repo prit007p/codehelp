@@ -172,13 +172,13 @@ const Profile = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-20 pb-8 px-4 md:px-8">
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 px-3 pb-8 pt-20 sm:px-4 md:px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Profile Header Card */}
                 <Card className="relative overflow-hidden border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent backdrop-blur-sm mb-6">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent"></div>
-                    <CardContent className="relative p-6 md:p-8">
-                        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <CardContent className="relative p-4 sm:p-6 md:p-8">
+                        <div className="flex flex-col items-center gap-5 md:flex-row md:items-start md:gap-6">
                             {/* Avatar Section */}
                             <div className="relative group">
                                 <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-primary to-primary/60 p-1 shadow-xl shadow-primary/20">
@@ -203,12 +203,12 @@ const Profile = () => {
                             </div>
 
                             {/* User Info */}
-                            <div className="flex-1 text-center md:text-left">
-                                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                            <div className="min-w-0 flex-1 text-center md:text-left">
+                                <h1 className="mb-2 break-words text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
                                     {user?.username}
                                 </h1>
-                                <div className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 text-muted-foreground">
-                                    <span className="flex items-center gap-2">
+                                <div className="flex flex-col items-center gap-2 text-muted-foreground md:flex-row md:items-start md:gap-4">
+                                    <span className="flex max-w-full items-center gap-2 break-all">
                                         <Mail className="w-4 h-4" />
                                         {user?.email}
                                     </span>
@@ -234,7 +234,7 @@ const Profile = () => {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 self-center md:self-start">
                                 <ModeToggle />
                                 <Button variant="destructive" size="icon" onClick={handleLogout}>
                                     <LogOut className="w-4 h-4" />
@@ -245,7 +245,7 @@ const Profile = () => {
                 </Card>
 
                 {/* Tab Navigation */}
-                <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+                <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
                     {['overview', 'friends', 'settings'].map((tab) => (
                         <Button
                             key={tab}
@@ -354,14 +354,14 @@ const Profile = () => {
                                     {find && !searchLoading && findfriend.length > 0 && (
                                         <div className="mt-4 space-y-2">
                                             {findfriend.map((element, index) => (
-                                                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                                                    <div className="flex items-center gap-3">
+                                                <div key={index} className="flex flex-col gap-3 rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted sm:flex-row sm:items-center sm:justify-between">
+                                                    <div className="flex min-w-0 items-center gap-3">
                                                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                                                             <User className="w-5 h-5 text-primary" />
                                                         </div>
-                                                        <span className="font-medium">{element.username}</span>
+                                                        <span className="truncate font-medium">{element.username}</span>
                                                     </div>
-                                                    <Button size="sm" onClick={() => addfriend(element.username)}>
+                                                    <Button size="sm" onClick={() => addfriend(element.username)} className="w-full sm:w-auto">
                                                         <UserPlus className="w-4 h-4 mr-2" />
                                                         Add
                                                     </Button>
@@ -393,9 +393,9 @@ const Profile = () => {
                                             {friends.map((friend) => (
                                                 <div
                                                     key={friend._id}
-                                                    className="flex items-center gap-4 p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors border border-border/50"
+                                                    className="flex min-w-0 items-center gap-3 rounded-xl border border-border/50 bg-muted/30 p-3 transition-colors hover:bg-muted/50 sm:gap-4 sm:p-4"
                                                 >
-                                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 p-0.5">
+                                                    <div className="h-11 w-11 shrink-0 rounded-full bg-gradient-to-br from-primary to-primary/60 p-0.5 sm:h-12 sm:w-12">
                                                         {friend.avatar ? (
                                                             <img src={friend.avatar} alt={friend.username} className="w-full h-full rounded-full object-cover" />
                                                         ) : (
