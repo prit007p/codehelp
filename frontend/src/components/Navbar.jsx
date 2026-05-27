@@ -102,17 +102,24 @@ function Navbar() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <motion.div
-            whileHover={{ rotate: 90}}
-            transition={{ type: "spring", stiffness: 300 }}
-            className="h-5 w-5 shrink-0 rotate-45 rounded-sm border-[3px] border-primary"
-          />
           <button
             type="button"
             onClick={() => goTo("Home")}
-            className="hidden truncate text-sm font-bold text-primary sm:block"
+            className="flex h-10 shrink-0 items-center gap-2 rounded-md px-1.5 transition-opacity hover:opacity-90 sm:gap-3"
+            aria-label="Go to CodeHelp home"
           >
-            CodeHelp
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-950 ring-1 ring-white/10">
+              <img
+                src="/gemini-svg.svg"
+                alt=""
+                className="h-8 w-8 object-contain"
+              />
+            </span>
+            <span
+              className="hidden text-sm font-black tracking-wide text-primary sm:inline"
+            >
+              CodeHelp
+            </span>
           </button>
         </div>
 

@@ -110,7 +110,6 @@ app.use(admin.options.rootPath, adminRouter)
 
 
 
-// app.use( middleware,isadmin, adminRoutes);
 app.use('/api/problems/', middleware, problemRoutes);
 app.use('/api/compile', middleware, compileRoutes);
 app.use('/api/profile', middleware, profile);
