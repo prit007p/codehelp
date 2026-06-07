@@ -194,7 +194,7 @@ const ProblemslistPage = () => {
                   </div>
                   <div className="mt-3 flex items-center justify-between gap-3">
                     <span className={`rounded-full px-2 py-1 text-xs font-semibold ${problem.status === 'Accepted' ? 'bg-green-500/20 text-green-600' :
-                        problem.status === 'Wrong Answer' ? 'bg-destructive/20 text-destructive' :
+                        ['Wrong Answer', 'Compilation Error', 'Runtime Error', 'Unaccepted'].includes(problem.status) ? 'bg-destructive/20 text-destructive' :
                           problem.status === 'Solved' ? 'bg-blue-500/20 text-blue-600' :
                             'bg-muted/50 text-muted-foreground'
                       }`}>
@@ -243,7 +243,7 @@ const ProblemslistPage = () => {
                       </td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${problem.status === 'Accepted' ? 'bg-green-500/20 text-green-600' :
-                            problem.status === 'Wrong Answer' ? 'bg-destructive/20 text-destructive' :
+                            ['Wrong Answer', 'Compilation Error', 'Runtime Error', 'Unaccepted'].includes(problem.status) ? 'bg-destructive/20 text-destructive' :
                               problem.status === 'Solved' ? 'bg-blue-500/20 text-blue-600' :
                                 'bg-muted/50 text-muted-foreground'
                           }`}>

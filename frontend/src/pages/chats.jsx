@@ -12,12 +12,11 @@ const Chats = () => {
   useEffect(() => {
     try {
       async function findfrineds() {
-        const res = await axios.get('/api/profile');
+        const res = await axios.get('/api/chats');
         if (res.data.status === false) {
           navigate('/login');
         }
-        setFriends(res.data.friends || []);
-        console.log(res.data.friends);
+        setFriends(Array.isArray(res.data) ? res.data : []);
       }
       findfrineds();
     }

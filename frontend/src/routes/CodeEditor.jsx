@@ -16,8 +16,6 @@ const defaultCodeSnippets = {
   cpp: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, C++!" << std::endl;\n    return 0;\n}',
   java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, Java!");\n    }\n}',
   c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, C!\\n");\n    return 0;\n}',
-  ruby: 'puts "Hello, Ruby!"',
-  go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, Go!")\n}',
 };
 
 const CodeEditor = () => {
@@ -103,7 +101,7 @@ const CodeEditor = () => {
           <CardHeader className="flex-row justify-between items-center pb-4">
             <CardTitle className="text-2xl font-semibold text-card-foreground">Code Editor</CardTitle>
             <div className="flex space-x-4">
-              <Selector language={language} setLanguage={setLanguage} />
+              <Selector selectedLanguage={language} setSelectedLanguage={setLanguage} />
               <Button onClick={handleSubmit} disabled={isLoading} className="bg-primary text-primary-foreground hover:bg-primary/90">
                 {isLoading ? 'Running...' : 'Run Code'}
               </Button>

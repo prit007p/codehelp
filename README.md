@@ -66,6 +66,7 @@ PISTON_API_URL=http://127.0.0.1:2000/api/v2
 
 ADMIN_EMAIL=your_admin_email
 ADMIN_PASSWORD=your_admin_password
+ADMIN_COOKIE_SECRET=generate_a_long_random_secret
 
 CLOUD_NAME=your_cloudinary_cloud_name
 API_KEY=your_cloudinary_api_key
@@ -330,6 +331,7 @@ curl http://127.0.0.1:2000/api/v2/runtimes
 
 - Rotate any secret that was pasted into chat, screenshots, commits, or logs.
 - Keep Clerk secret keys only on the backend.
+- Use a long random `ADMIN_COOKIE_SECRET` in production.
 - Keep MongoDB Atlas network access restricted when possible.
 - Use HTTPS before a real production launch.
 - Change the default admin password before sharing the site.

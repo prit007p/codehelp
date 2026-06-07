@@ -17,6 +17,10 @@ const Landing = lazy(() => import('./pages/Landing'));
 const Chats = lazy(() => import('./pages/chats'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const SubmissionPage = lazy(() => import('./pages/SubmissionPage'));
+const ContestsPage = lazy(() => import('./pages/ContestsPage'));
+const ContestDetailPage = lazy(() => import('./pages/ContestDetailPage'));
+const ContestProblemPage = lazy(() => import('./pages/ContestProblemPage'));
+const ContestLeaderboardPage = lazy(() => import('./pages/ContestLeaderboardPage'));
 
 function ThemedToaster() {
   const { theme } = useTheme();
@@ -62,6 +66,10 @@ function App() {
             <Route path="/solution" element={<RequireAuth><Solution /></RequireAuth>} />
             <Route path="/problems" element={<RequireAuth><ProblemslistPage /></RequireAuth>} />
             <Route path="/problem/:problemId" element={<RequireAuth><SingleProblemPage /></RequireAuth>} />
+            <Route path="/contests" element={<RequireAuth><ContestsPage /></RequireAuth>} />
+            <Route path="/contest/:contestId" element={<RequireAuth><ContestDetailPage /></RequireAuth>} />
+            <Route path="/contest/:contestId/problem/:problemId" element={<RequireAuth><ContestProblemPage /></RequireAuth>} />
+            <Route path="/contest/:contestId/leaderboard" element={<RequireAuth><ContestLeaderboardPage /></RequireAuth>} />
             <Route path='/register/*' element={<RegisterPage />} />
             <Route path='/Chats' element={<RequireAuth><Chats /></RequireAuth>} />
             <Route path="/chat/:id" element={<RequireAuth><ChatPage /></RequireAuth>} />

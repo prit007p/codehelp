@@ -2,6 +2,9 @@ import express from 'express';
 const router = express.Router();
 import User from '../models/User.js';
 
+const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 router.get('/', async(req, res) => {
     try {
         const user = await User.findById(req.user.userId).populate('friends', 'username email avatar');
@@ -25,20 +28,25 @@ router.put('/', async(req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        if (username && username !== userToUpdate.username) {
-            const existingUserWithUsername = await User.findOne({ username });
+        const nextUsername = String(username || '').trim();
+        if (nextUsername && nextUsername !== userToUpdate.username) {
+            if (nextUsername.length < 3 || nextUsername.length > 32) {
+                return res.status(400).json({ message: 'Username must be between 3 and 32 characters.' });
+            }
+
+            if (!/^[a-zA-Z0-9_-]+$/.test(nextUsername)) {
+                return res.status(400).json({ message: 'Username can only contain letters, numbers, underscores, and hyphens.' });
+            }
+
+            const existingUserWithUsername = await User.findOne({ username: nextUsername });
             if (existingUserWithUsername) {
                 return res.status(409).json({ message: 'Username already taken.' });
             }
-            userToUpdate.username = username;
+            userToUpdate.username = nextUsername;
         }
 
-        if (email && email !== userToUpdate.email) {
-            const existingUserWithEmail = await User.findOne({ email });
-            if (existingUserWithEmail) {
-                return res.status(409).json({ message: 'Email already registered.' });
-            }
-            userToUpdate.email = email;
+        if (email && normalizeEmail(email) !== normalizeEmail(userToUpdate.email)) {
+            return res.status(400).json({ message: 'Email is managed by Clerk and cannot be changed here.' });
         }
 
         if (avatar) {
@@ -72,8 +80,10 @@ router.post('/add-friend', async(req, res) => {
             return res.json({ message: 'Already friends with this user' });
         }
 
-        currentUser.friends.push(friendToAdd._id);
-        await currentUser.save();
+        await Promise.all([
+            User.updateOne({ _id: currentUser._id }, { $addToSet: { friends: friendToAdd._id } }),
+            User.updateOne({ _id: friendToAdd._id }, { $addToSet: { friends: currentUser._id } }),
+        ]);
 
         res.status(200).json({ message: 'Friend added successfully!' });
     } catch (err) {
@@ -83,19 +93,25 @@ router.post('/add-friend', async(req, res) => {
 });
 
 router.get('/findfriend', async(req, res) => {
-    const query = req.query.findfriend;
+    const query = String(req.query.findfriend || '').trim();
 
     if (!query) {
         return res.status(400).json({ message: 'Search query is required' });
     }
 
+    if (query.length > 64) {
+        return res.status(400).json({ message: 'Search query is too long' });
+    }
+
     try {
+        const escapedQuery = escapeRegex(query);
         const users = await User.find({
+            _id: { $ne: req.user.userId },
             $or: [
-                { username: { $regex: query, $options: 'i' } },
-                { email: { $regex: query, $options: 'i' } }
+                { username: { $regex: escapedQuery, $options: 'i' } },
+                { email: { $regex: escapedQuery, $options: 'i' } }
             ]
-        }).select('username email avatar');
+        }).select('username email avatar').limit(10);
         res.json(users);
     } catch (err) {
         console.error('Error searching users from profile:', err);

@@ -14,8 +14,6 @@ export const supportedLanguages = [
   { name: 'cpp', version: '10.2.0', displayName: 'C++', editorLanguage: 'cpp' },
   { name: 'java', version: '15.0.2', displayName: 'Java', editorLanguage: 'java' },
   { name: 'c', version: '10.2.0', displayName: 'C', editorLanguage: 'c' },
-  { name: 'ruby', version: '3.0.1', displayName: 'Ruby', editorLanguage: 'ruby' },
-  { name: 'go', version: '1.16.2', displayName: 'Go', editorLanguage: 'go' },
 ];
 
 const Selector = ({ selectedLanguage, setSelectedLanguage }) => {

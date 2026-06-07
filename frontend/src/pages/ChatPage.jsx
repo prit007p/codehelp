@@ -26,6 +26,7 @@ const ChatPage = () => {
   const [socket, setSocket] = useState(null);
   const messagesEndRef = useRef(null);
   const [user, setUser] = useState(null);
+  const [isLoadingFriend, setIsLoadingFriend] = useState(true);
   const { getToken, isLoaded, isSignedIn } = useAuth();
 
   const [roomid, setRoomid] = useState('');
@@ -39,16 +40,20 @@ const ChatPage = () => {
   useEffect(() => {
     async function fetchuser() {
       try {
+        setIsLoadingFriend(true);
         const res = await axios.get('/api/profile');
         setUser(res.data);
         if (res.data && id) {
           const found = res.data.friends.find(f => f._id === id);
-          setFriend(found);
+          setFriend(found || null);
         }
         let h = [res.data._id, id].sort();
         setRoomid(h[0] + h[1]);
       } catch (err) {
         console.log("error in fetching user");
+        setFriend(null);
+      } finally {
+        setIsLoadingFriend(false);
       }
     }
     fetchuser();
@@ -114,12 +119,26 @@ const ChatPage = () => {
     }
   };
 
-  if (!friend) {
+  if (isLoadingFriend) {
     return (
       <div className="flex min-h-[calc(100svh-4rem)] items-center justify-center bg-background text-foreground">
         <div className="flex flex-col items-center gap-3 text-muted-foreground">
           <div className="h-12 w-12 animate-pulse rounded-full bg-muted" />
           <p className="text-sm">Loading chat...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!friend) {
+    return (
+      <div className="flex min-h-[calc(100svh-4rem)] items-center justify-center bg-background px-4 text-foreground">
+        <div className="max-w-sm text-center">
+          <p className="text-lg font-semibold">Chat unavailable</p>
+          <p className="mt-2 text-sm text-muted-foreground">You can only open direct messages with users in your friends list.</p>
+          <Button type="button" onClick={() => navigate('/Chats')} className="mt-4">
+            Back to chats
+          </Button>
         </div>
       </div>
     );

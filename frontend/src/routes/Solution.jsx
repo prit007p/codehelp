@@ -59,7 +59,17 @@ const Solution = () => {
     );
   }
 
-  const { problemTitle, code, language, status, runtime, memory, testCases } = solutionDetails;
+  const {
+    problemname,
+    problemTitle,
+    code,
+    language,
+    status,
+    runtime,
+    memory,
+    result = [],
+  } = solutionDetails;
+  const title = problemTitle || problemname || 'Problem';
 
   const renderStatusBadge = (submissionStatus) => {
     let colorClass = 'bg-muted text-muted-foreground';
@@ -90,10 +100,10 @@ const Solution = () => {
           <CardTitle className="mb-2 break-words text-2xl font-bold leading-tight text-card-foreground sm:text-3xl">Solution for: 
             {problemId ? (
               <Link to={`/problem/${problemId}`} className="text-primary hover:underline">
-                {problemTitle || 'Problem'}
+                {title}
               </Link>
             ) : (
-              problemTitle || 'Problem'
+              title
             )}
           </CardTitle>
           <CardContent className="flex flex-wrap items-center gap-3 p-0 pt-2 text-sm text-muted-foreground sm:gap-4 sm:text-base">
@@ -138,18 +148,14 @@ const Solution = () => {
 
           {activeTab === 'testcases' && (
             <div className="space-y-4">
-              {testCases && testCases.length > 0 ? (
-                testCases.map((testCase, index) => (
+              {result.length > 0 ? (
+                result.map((testCase, index) => (
                   <Card key={index} className="border border-border rounded-lg bg-card shadow-sm p-4">
-                    <CardTitle className="text-xl font-semibold text-card-foreground mb-2">Test Case {index + 1}</CardTitle>
+                    <CardTitle className="text-xl font-semibold text-card-foreground mb-2">Test Case {testCase.testCase || index + 1}</CardTitle>
                     <CardContent className="p-0 pt-2">
-                      <p className="font-medium text-foreground">Input:</p>
-                      <pre className="bg-muted p-2 rounded-md text-sm whitespace-pre-wrap mb-2 text-muted-foreground">{testCase.input}</pre>
-                      <p className="font-medium text-foreground">Expected Output:</p>
-                      <pre className="bg-muted p-2 rounded-md text-sm whitespace-pre-wrap mb-2 text-muted-foreground">{testCase.expectedOutput}</pre>
                       <p className="font-medium text-foreground">Received Output:</p>
-                      <pre className="bg-muted p-2 rounded-md text-sm whitespace-pre-wrap mb-2 text-muted-foreground">{testCase.receivedOutput}</pre>
-                      <p className={`font-semibold mt-2 ${testCase.passed ? 'text-green-600' : 'text-destructive'}`}>Status: {testCase.passed ? 'Passed' : 'Failed'}</p>
+                      <pre className="bg-muted p-2 rounded-md text-sm whitespace-pre-wrap mb-2 text-muted-foreground">{testCase.output || 'N/A'}</pre>
+                      <p className={`font-semibold mt-2 ${testCase.correct ? 'text-green-600' : 'text-destructive'}`}>Status: {testCase.correct ? 'Passed' : 'Failed'}</p>
                       {testCase.error && <p className="font-semibold text-destructive mt-2">Error: {testCase.error}</p>}
                     </CardContent>
                   </Card>

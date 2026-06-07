@@ -15,6 +15,8 @@ import discussion_socket_io from './other/discussion_socketio.js';
 import middleware from './other/middleware.js';
 import { clerkMiddleware } from '@clerk/express';
 import compileRoutes from './routes/compile.js';
+import contestRoutes from './routes/contests.js';
+import codeReviewRoutes from './routes/codeReview.js';
 import chats from './routes/chats.js';
 import psl_msg from './routes/psl_msg.js';
 import cloudnairy from './other/cloudnairy.js';
@@ -26,6 +28,8 @@ import User from './models/User.js';
 import Problem from './models/Problem.js';
 import submission from './models/submission.js';
 import messageuser from './models/messageuser.js';
+import Contest from './models/Contest.js';
+import ContestSubmission from './models/ContestSubmission.js';
 
 const mongoUri = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3002;
@@ -33,6 +37,12 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const ADMIN_URL = process.env.ADMIN_URL;
+const ADMIN_COOKIE_SECRET = process.env.ADMIN_COOKIE_SECRET
+    || (process.env.NODE_ENV === 'production' ? null : 'dev-admin-cookie-secret-change-me');
+
+if (!ADMIN_COOKIE_SECRET) {
+    throw new Error('ADMIN_COOKIE_SECRET is required in production');
+}
 
 const allowedOrigins = [
     'http://localhost:3000',
@@ -82,7 +92,8 @@ const io = new Server(server, {
 });
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '256kb' }));
+app.use(express.urlencoded({ extended: false, limit: '64kb' }));
 
 
 const ADMIN = {
@@ -91,7 +102,7 @@ const ADMIN = {
 }
 
 const adminOptions = {
-    resources: [Problem, User, submission, Problemdiscussion, messageuser],
+    resources: [Problem, User, submission, Problemdiscussion, messageuser, Contest, ContestSubmission],
     rootPath: '/admin',
 }
 
@@ -104,14 +115,16 @@ const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
         return null
     },
     cookieName: 'adminjs',
-    cookiePassword: 'somePassword',
+    cookiePassword: ADMIN_COOKIE_SECRET,
 })
 app.use(admin.options.rootPath, adminRouter)
 
 
 
 app.use('/api/problems/', middleware, problemRoutes);
+app.use('/api/contests', middleware, contestRoutes);
 app.use('/api/compile', middleware, compileRoutes);
+app.use('/api/code-review', middleware, codeReviewRoutes);
 app.use('/api/profile', middleware, profile);
 app.use('/api/get-signature', middleware, cloudnairy);
 app.use('/api/register', register);

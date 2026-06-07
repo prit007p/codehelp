@@ -46,7 +46,7 @@ function ModeToggle() {
 function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const navItems = ["Home", "Problems",  "Chats", "Submission"]
+  const navItems = ["Home", "Problems", "Contests", "Chats", "Submission"]
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -54,6 +54,7 @@ function Navbar() {
   const navRoutes = {
     Home: "/",
     Problems: "/problems",
+    Contests: "/contests",
     Chats: "/Chats",
     Submission: "/submission",
     Profile :"/profile"

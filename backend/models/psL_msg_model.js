@@ -21,7 +21,8 @@ const messageContentSchema = new mongoose.Schema({
     },
     msg: {
         type: String,
-        required: true
+        required: true,
+        maxlength: 2000
     },
     timestamp: {
         type: Date,
@@ -45,5 +46,7 @@ const Psl_msg_model = new mongoose.Schema({
         default:[]
     }
 });
+
+Psl_msg_model.index({ user1: 1, user2: 1 }, { unique: true });
 
 export default mongoose.model('Psl_msg_model',Psl_msg_model);

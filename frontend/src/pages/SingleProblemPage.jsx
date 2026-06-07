@@ -5,6 +5,7 @@ import { FaPlay, FaTrash, FaPlus, FaChevronDown, FaTimes } from 'react-icons/fa'
 import Editor from '../components/Editor';
 import Selector, { supportedLanguages } from '../components/Selector';
 import DiscussionChat from '../components/DiscussionChat';
+import CodeReviewPanel from '@/components/CodeReviewPanel';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -16,8 +17,6 @@ const defaultCodeSnippets = {
   cpp: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, C++!" << std::endl;\n    return 0;\n}',
   java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, Java!");\n    }\n}',
   c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, C!\\n");\n    return 0;\n}',
-  ruby: 'puts "Hello, Ruby!"',
-  go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, Go!")\n}',
 };
 
 const SingleProblemPage = () => {
@@ -406,7 +405,7 @@ const SingleProblemPage = () => {
         {/* Right Column */}
         {activeTab !== "discussion" && (
         <Card className="flex min-w-0 flex-col rounded-lg border-border/70 p-0 shadow-sm">
-          <Card className="flex-1 mb-4 shadow-none">
+	          <Card className="flex-1 mb-4 shadow-none">
             <CardHeader className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
               <CardTitle className="text-xl sm:text-2xl">Code Editor</CardTitle>
               <Selector selectedLanguage={language} setSelectedLanguage={setLanguage} />
@@ -415,10 +414,12 @@ const SingleProblemPage = () => {
               <div className="overflow-hidden rounded-md border">
                 <Editor language={language.editorLanguage} input={code} height='min(54vh, 520px)' setinput={setCode} />
               </div>
-            </CardContent>
-          </Card>
-  
-          <Card className="shadow-none">
+	            </CardContent>
+	          </Card>
+
+            <CodeReviewPanel code={code} language={language.name} version={language.version} />
+
+	          <Card className="shadow-none">
             <CardHeader className="p-4 sm:p-6"><CardTitle>Test Cases</CardTitle></CardHeader>
             <CardContent className="space-y-2 p-3 pt-0 sm:p-6 sm:pt-0">
               {testCases.map((tc, idx) => (

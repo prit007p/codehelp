@@ -78,12 +78,11 @@ const SubmissionPage = () => {
               <h3 className="text-lg font-semibold mt-4">Code:</h3>
               <pre className="bg-muted p-2 rounded overflow-x-auto">{selectedSubmission.code}</pre>
               <h3 className="text-lg font-semibold mt-4">Test Results:</h3>
-              {selectedSubmission.result.map((test, index) => (
+              {(selectedSubmission.result || []).map((test, index) => (
                 <Card key={index} className="mt-2 p-2">
-                  <p><strong>Test Case {index + 1}:</strong> {test.correct ? 'Correct' : 'Incorrect'}</p>
-                  <p><strong>Input:</strong> {test.input || 'N/A'}</p>
-                  <p><strong>Output:</strong> {test.output || 'N/A'}</p>
-                  <p><strong>Expected:</strong> {test.expected || 'N/A'}</p>
+                  <p><strong>Test Case {test.testCase || index + 1}:</strong> {test.correct ? 'Correct' : 'Incorrect'}</p>
+                  <p><strong>Output:</strong></p>
+                  <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-words rounded bg-muted p-2 text-sm">{test.output || 'N/A'}</pre>
                 </Card>
               ))}
             </CardContent>

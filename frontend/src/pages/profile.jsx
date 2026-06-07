@@ -108,7 +108,6 @@ const Profile = () => {
         try {
             const res = await axiosInstance.put('/api/profile', {
                 username: editUsername,
-                email: editEmail,
                 avatar: avatarUrl,
             });
             setUser(res.data);
@@ -477,13 +476,14 @@ const Profile = () => {
 
                                     {/* Email */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="email">Email</Label>
+                                        <Label htmlFor="email">Email managed by Clerk</Label>
                                         <Input
                                             id="email"
                                             type="email"
                                             value={editEmail}
-                                            onChange={(e) => setEditEmail(e.target.value)}
-                                            placeholder="Enter email"
+                                            readOnly
+                                            disabled
+                                            placeholder="Email"
                                         />
                                     </div>
 
